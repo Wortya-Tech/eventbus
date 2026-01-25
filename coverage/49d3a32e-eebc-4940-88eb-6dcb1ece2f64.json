@@ -1,5 +1,5 @@
 {
-  "scriptId": "336",
+  "scriptId": "368",
   "url": "file:///home/v_raton/git/personal/fanaticjs/test/e2e/helpers.ts",
   "functions": [
     {
@@ -7,7 +7,7 @@
       "ranges": [
         {
           "startOffset": 0,
-          "endOffset": 5501,
+          "endOffset": 4737,
           "count": 1
         }
       ],
@@ -51,7 +51,7 @@
         {
           "startOffset": 871,
           "endOffset": 951,
-          "count": 3
+          "count": 4
         }
       ],
       "isBlockCoverage": true
@@ -62,7 +62,7 @@
         {
           "startOffset": 959,
           "endOffset": 1031,
-          "count": 6
+          "count": 5
         }
       ],
       "isBlockCoverage": true
@@ -73,7 +73,7 @@
         {
           "startOffset": 1039,
           "endOffset": 1090,
-          "count": 6
+          "count": 11
         }
       ],
       "isBlockCoverage": true
@@ -95,40 +95,23 @@
         {
           "startOffset": 1435,
           "endOffset": 1724,
-          "count": 0
-        }
-      ],
-      "isBlockCoverage": false
-    },
-    {
-      "functionName": "getQueueMessageCount",
-      "ranges": [
+          "count": 1
+        },
         {
-          "startOffset": 1732,
-          "endOffset": 1881,
+          "startOffset": 1637,
+          "endOffset": 1723,
           "count": 0
         }
       ],
-      "isBlockCoverage": false
-    },
-    {
-      "functionName": "consumeAndGetMessage",
-      "ranges": [
-        {
-          "startOffset": 1889,
-          "endOffset": 2169,
-          "count": 0
-        }
-      ],
-      "isBlockCoverage": false
+      "isBlockCoverage": true
     },
     {
       "functionName": "cleanupService",
       "ranges": [
         {
-          "startOffset": 2177,
-          "endOffset": 2239,
-          "count": 6
+          "startOffset": 1732,
+          "endOffset": 1794,
+          "count": 8
         }
       ],
       "isBlockCoverage": true
@@ -137,57 +120,8 @@
       "functionName": "cleanupServices",
       "ranges": [
         {
-          "startOffset": 2247,
-          "endOffset": 2357,
-          "count": 3
-        }
-      ],
-      "isBlockCoverage": true
-    },
-    {
-      "functionName": "",
-      "ranges": [
-        {
-          "startOffset": 2330,
-          "endOffset": 2352,
-          "count": 6
-        }
-      ],
-      "isBlockCoverage": true
-    },
-    {
-      "functionName": "cleanupExchange",
-      "ranges": [
-        {
-          "startOffset": 2365,
-          "endOffset": 2463,
-          "count": 3
-        }
-      ],
-      "isBlockCoverage": true
-    },
-    {
-      "functionName": "cleanupQueue",
-      "ranges": [
-        {
-          "startOffset": 2471,
-          "endOffset": 2557,
-          "count": 12
-        }
-      ],
-      "isBlockCoverage": true
-    },
-    {
-      "functionName": "cleanupExchangeAndQueues",
-      "ranges": [
-        {
-          "startOffset": 2565,
-          "endOffset": 2866,
-          "count": 3
-        },
-        {
-          "startOffset": 2743,
-          "endOffset": 2797,
+          "startOffset": 1802,
+          "endOffset": 1912,
           "count": 4
         }
       ],
@@ -197,9 +131,58 @@
       "functionName": "",
       "ranges": [
         {
-          "startOffset": 2832,
-          "endOffset": 2861,
-          "count": 12
+          "startOffset": 1885,
+          "endOffset": 1907,
+          "count": 8
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cleanupExchange",
+      "ranges": [
+        {
+          "startOffset": 1920,
+          "endOffset": 2018,
+          "count": 4
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cleanupQueue",
+      "ranges": [
+        {
+          "startOffset": 2026,
+          "endOffset": 2112,
+          "count": 24
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cleanupExchangeAndQueues",
+      "ranges": [
+        {
+          "startOffset": 2120,
+          "endOffset": 2421,
+          "count": 4
+        },
+        {
+          "startOffset": 2298,
+          "endOffset": 2352,
+          "count": 8
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 2387,
+          "endOffset": 2416,
+          "count": 24
         }
       ],
       "isBlockCoverage": true
@@ -208,14 +191,9 @@
       "functionName": "createChannelSafely",
       "ranges": [
         {
-          "startOffset": 2874,
-          "endOffset": 3124,
-          "count": 3
-        },
-        {
-          "startOffset": 2980,
-          "endOffset": 3122,
-          "count": 0
+          "startOffset": 2429,
+          "endOffset": 2522,
+          "count": 4
         }
       ],
       "isBlockCoverage": true
@@ -224,14 +202,9 @@
       "functionName": "cleanupWithGrace",
       "ranges": [
         {
-          "startOffset": 3132,
-          "endOffset": 3692,
-          "count": 3
-        },
-        {
-          "startOffset": 3508,
-          "endOffset": 3546,
-          "count": 0
+          "startOffset": 2530,
+          "endOffset": 3029,
+          "count": 4
         }
       ],
       "isBlockCoverage": true
@@ -240,9 +213,14 @@
       "functionName": "createProducer",
       "ranges": [
         {
-          "startOffset": 3700,
-          "endOffset": 4139,
+          "startOffset": 3037,
+          "endOffset": 3476,
           "count": 3
+        },
+        {
+          "startOffset": 3218,
+          "endOffset": 3248,
+          "count": 0
         }
       ],
       "isBlockCoverage": true
@@ -251,9 +229,9 @@
       "functionName": "createConsumer",
       "ranges": [
         {
-          "startOffset": 4147,
-          "endOffset": 4571,
-          "count": 3
+          "startOffset": 3484,
+          "endOffset": 3908,
+          "count": 4
         }
       ],
       "isBlockCoverage": true
@@ -262,9 +240,14 @@
       "functionName": "createTestData",
       "ranges": [
         {
-          "startOffset": 4579,
-          "endOffset": 4731,
-          "count": 3
+          "startOffset": 3916,
+          "endOffset": 4068,
+          "count": 15
+        },
+        {
+          "startOffset": 3968,
+          "endOffset": 4008,
+          "count": 1
         }
       ],
       "isBlockCoverage": true
@@ -273,9 +256,9 @@
       "functionName": "encodeTestData",
       "ranges": [
         {
-          "startOffset": 4739,
-          "endOffset": 4816,
-          "count": 3
+          "startOffset": 4076,
+          "endOffset": 4153,
+          "count": 15
         }
       ],
       "isBlockCoverage": true
@@ -284,8 +267,8 @@
       "functionName": "decodeTestData",
       "ranges": [
         {
-          "startOffset": 4824,
-          "endOffset": 4914,
+          "startOffset": 4161,
+          "endOffset": 4251,
           "count": 0
         }
       ],
@@ -295,57 +278,30 @@
       "functionName": "createRetryTracker",
       "ranges": [
         {
-          "startOffset": 4922,
-          "endOffset": 5004,
-          "count": 3
-        }
-      ],
-      "isBlockCoverage": true
-    },
-    {
-      "functionName": "createRetryHandler",
-      "ranges": [
-        {
-          "startOffset": 5012,
-          "endOffset": 5307,
-          "count": 1
-        }
-      ],
-      "isBlockCoverage": true
-    },
-    {
-      "functionName": "handler",
-      "ranges": [
-        {
-          "startOffset": 5071,
-          "endOffset": 5287,
-          "count": 3
-        },
-        {
-          "startOffset": 5173,
-          "endOffset": 5283,
-          "count": 1
-        }
-      ],
-      "isBlockCoverage": true
-    },
-    {
-      "functionName": "killChannel",
-      "ranges": [
-        {
-          "startOffset": 5315,
-          "endOffset": 5399,
+          "startOffset": 4259,
+          "endOffset": 4341,
           "count": 0
         }
       ],
       "isBlockCoverage": false
     },
     {
-      "functionName": "killConnection",
+      "functionName": "createRetryHandler",
       "ranges": [
         {
-          "startOffset": 5407,
-          "endOffset": 5500,
+          "startOffset": 4349,
+          "endOffset": 4644,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "killChannel",
+      "ranges": [
+        {
+          "startOffset": 4652,
+          "endOffset": 4736,
           "count": 0
         }
       ],

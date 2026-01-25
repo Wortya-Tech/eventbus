@@ -2,7 +2,7 @@ import { Buffer } from "node:buffer";
 import { TextDecoder } from "node:util";
 import { setTimeout as nodeSetTimeout } from "node:timers/promises";
 import { connect as amqpConnect } from "amqplib";
-import type { Channel, ChannelModel, Message } from "amqplib";
+import type { Channel, ChannelModel } from "amqplib";
 import { EventBusService } from "../../src/eventBus/index.ts";
 
 export const rabbitMQUrl = "amqp://guest:guest@localhost:5672";
@@ -76,28 +76,6 @@ export async function waitForMessages(
   throw new Error(`Timeout waiting for ${count} messages`);
 }
 
-export async function getQueueMessageCount(
-  channel: Channel,
-  queueName: string,
-): Promise<number> {
-  const queueInfo = await channel.checkQueue(queueName);
-  return queueInfo.messageCount;
-}
-
-export async function consumeAndGetMessage(
-  channel: Channel,
-  queueName: string,
-  timeout = 5000,
-): Promise<Message | null> {
-  const start = Date.now();
-  while (Date.now() - start < timeout) {
-    const msg = await channel.get(queueName, { noAck: true });
-    if (msg) return msg;
-    await sleep(50);
-  }
-  return null;
-}
-
 export function cleanupService(service: EventBusService): Promise<void> {
   return service.close();
 }
@@ -142,14 +120,7 @@ export async function cleanupExchangeAndQueues(
 export async function createChannelSafely(
   connection: ChannelModel,
 ): Promise<Channel | null> {
-  try {
-    return await connection.createChannel();
-  } catch (error: unknown) {
-    if (error instanceof Error && error.message.includes("Connection closed")) {
-      return null;
-    }
-    throw error;
-  }
+  return await connection.createChannel();
 }
 
 export async function cleanupWithGrace(
@@ -164,11 +135,7 @@ export async function cleanupWithGrace(
     try {
       await cleanupExchangeAndQueues(channel, exchangeName, queueNames);
     } finally {
-      try {
-        await channel.close();
-      } catch {
-        // Tente fechar
-      }
+      await channel.close();
     }
   }
 
@@ -246,10 +213,10 @@ export function decodeTestData(buffer: Buffer): TestData {
   return JSON.parse(new TextDecoder().decode(buffer));
 }
 
-export interface RetryTracker {
-  attempts: number;
-  failures: number;
-  lastError?: Error;
+type RetryTracker ={
+    attempts: number;
+    failures: number;
+    lastError?: Error;
 }
 
 export function createRetryTracker(): RetryTracker {
@@ -272,10 +239,5 @@ export function createRetryHandler(
 
 export async function killChannel(channel: Channel) {
   await channel.close();
-  await sleep(100);
-}
-
-export async function killConnection(connection: ChannelModel) {
-  await connection.close();
   await sleep(100);
 }
