@@ -2,9 +2,9 @@ import { Buffer } from "node:buffer";
 import { TextDecoder } from "node:util";
 
 import { assertEquals } from "@std/assert";
-import amqplib from "npm:amqplib@0.10.9";
+import amqplib from "amqplib";
 import { setTimeout as setTimeoutFn } from "node:timers/promises";
-import type { Message } from "npm:amqplib@0.10.9";
+import type { Message } from "amqplib";
 
 const rabbitMQUrl = "amqp://guest:guest@localhost:5672";
 

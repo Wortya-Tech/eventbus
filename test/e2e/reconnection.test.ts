@@ -40,8 +40,9 @@ Deno.test("should reconnect after channel is killed", async () => {
     );
     services.push(consumer);
 
-    consumer.subscribe("handler", async () => {
+    consumer.subscribe("handler", () => {
       tracker.attempts++;
+      return Promise.resolve();
     });
 
     await consumer.consume();
@@ -105,8 +106,9 @@ Deno.test("should reconnect after connection is killed", async () => {
     );
     services.push(consumer);
 
-    consumer.subscribe("handler", async () => {
+    consumer.subscribe("handler", () => {
       tracker.attempts++;
+      return Promise.reject();
     });
 
     await consumer.consume();

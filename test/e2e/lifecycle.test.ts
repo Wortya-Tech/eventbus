@@ -38,8 +38,9 @@ Deno.test("should stop consuming after cancel", async () => {
     );
     services.push(consumer);
 
-    consumer.subscribe("handler", async () => {
+    consumer.subscribe("handler", () => {
       receivedCount++;
+      return Promise.resolve();
     });
 
     await consumer.consume();
@@ -154,8 +155,9 @@ Deno.test("should unsubscribe and stop processing", async () => {
     );
     services.push(consumer);
 
-    consumer.subscribe("handler", async () => {
+    consumer.subscribe("handler", () => {
       handlerCalledCount++;
+      return Promise.resolve();
     });
 
     await consumer.consume();

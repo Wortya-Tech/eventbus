@@ -37,7 +37,7 @@ class TestEventBusService extends EventBusService {
   }
 }
 
-Deno.test("isConnectionAlive detects null connections", async () => {
+Deno.test("isConnectionAlive detects null connections", () => {
   // Test connection is null
   const service = new TestEventBusService(
     "test-exchange",
@@ -48,7 +48,7 @@ Deno.test("isConnectionAlive detects null connections", async () => {
   assertEquals(service.testIsConnectionAlive(null), false);
 });
 
-Deno.test("isConnectionAlive handles malformed connection objects", async () => {
+Deno.test("isConnectionAlive handles malformed connection objects", () => {
   const service = new TestEventBusService(
     "test-exchange",
     "test-queue",
@@ -88,7 +88,7 @@ Deno.test("isConnectionAlive handles malformed connection objects", async () => 
   );
 });
 
-Deno.test("isChannelHealthy handles malformed states", async () => {
+Deno.test("isChannelHealthy handles malformed states", () => {
   const service = new TestEventBusService(
     "test-exchange",
     "test-queue",
@@ -140,7 +140,7 @@ Deno.test("isChannelHealthy handles malformed states", async () => {
   );
 });
 
-Deno.test("isChannelHealthy handles exceptions gracefully", async () => {
+Deno.test("isChannelHealthy handles exceptions gracefully", () => {
   const service = new TestEventBusService(
     "test-exchange",
     "test-queue",

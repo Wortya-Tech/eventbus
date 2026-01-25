@@ -229,12 +229,13 @@ export function createRetryHandler(
   tracker: RetryTracker,
   failUntilAttempt: number,
 ): (data: Buffer) => Promise<void> {
-  async function handler(_data: Buffer): Promise<void> {
+  function handler(_data: Buffer): Promise<void> {
     tracker.attempts++;
     if (tracker.attempts <= failUntilAttempt) {
       tracker.failures++;
-      throw new Error(`Intentional failure at attempt ${tracker.attempts}`);
+      return Promise.reject(`Intentional failure at attempt ${tracker.attempts}`);
     }
+    return Promise.resolve();
   }
   return handler;
 }

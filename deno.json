@@ -28,13 +28,6 @@
     "amqplib": "npm:amqplib@^0.10.9",
     "pino": "npm:pino@^10.3.0"
   },
-  "lint": {
-    "include": ["src", "test"],
-    "rules": {
-      "tags": ["recommended"],
-      "exclude": ["require-await"]
-    }
-  },
   "fmt": {
     "singleQuote": false,
     "lineWidth": 100
@@ -42,10 +35,9 @@
   "permissions": {
     "default": {
       "read": [".", "src", "test"],
-      "net": true,
-      "env": true,
-      "sys": true,
-      "run": ["allow"]
+      "net": ["localhost"],
+      "env": ["NODE_V8_COVERAGE"],
+      "sys": ["hostname"]
     }
   }
 }

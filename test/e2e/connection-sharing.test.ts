@@ -73,9 +73,10 @@ Deno.test("should manage owned connection for consumer", async () => {
 
     const testData = createTestData();
 
-    consumer.subscribe("handler", async (data) => {
+    consumer.subscribe("handler", (data) => {
       const parsed = JSON.parse(new TextDecoder().decode(data)) as typeof testData;
       assertEquals(parsed.id, testData.id);
+      return Promise.resolve();
     });
 
     await consumer.consume();

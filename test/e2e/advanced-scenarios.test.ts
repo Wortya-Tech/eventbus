@@ -176,8 +176,9 @@ Deno.test("should handle message publish before consumer is ready", async () => 
     services.push(consumer);
 
     let receivedData: TestData | null = null;
-    consumer.subscribe("handler", async (data) => {
+    consumer.subscribe("handler", (data) => {
       receivedData = JSON.parse(new TextDecoder().decode(data)) as TestData;
+      return Promise.resolve();
     });
 
     await consumer.consume();
@@ -232,8 +233,9 @@ Deno.test("should include all message metadata", async () => {
     );
     services.push(consumer);
 
-    consumer.subscribe("handler", async (_data, properties) => {
+    consumer.subscribe("handler", (_data, properties) => {
       receivedProps = properties;
+      return Promise.resolve();
     });
 
     await consumer.consume();
