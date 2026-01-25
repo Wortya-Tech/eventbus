@@ -1,23 +1,37 @@
 import { assertEquals } from "@std/assert";
 import { EventBusService } from "../../src/eventBus/index.ts";
+import type { Channel, ChannelModel } from "amqplib";
+import { pino } from "pino";
+
+const testLogger = pino({ level: "silent" });
 
 // Mock de serviço com overrides para testar health checks
 class TestEventBusService extends EventBusService {
-  public readonly testIsConnectionAlive: (conn: any) => boolean;
-  public readonly testIsChannelHealthy: (ch: any) => boolean;
+  public readonly testIsConnectionAlive: (conn: ChannelModel) => boolean;
+
+  public readonly testIsChannelHealthy: (ch: Channel | undefined) => boolean;
 
   constructor(
     exchangeName: string,
     queueName: string,
     source: string,
     version: string,
-    logger?: any,
     maxRetries?: number,
     retryDelay?: number,
     maxConnectionRetries?: number,
     initialReconnectDelay?: number,
   ) {
-    super(exchangeName, queueName, source, version, logger, maxRetries, retryDelay, maxConnectionRetries, initialReconnectDelay);
+    super(
+      exchangeName,
+      queueName,
+      source,
+      version,
+      testLogger,
+      maxRetries,
+      retryDelay,
+      maxConnectionRetries,
+      initialReconnectDelay,
+    );
     this.testIsConnectionAlive = this["isConnectionAlive"].bind(this);
     this.testIsChannelHealthy = this["isChannelHealthy"].bind(this);
   }
@@ -30,7 +44,6 @@ Deno.test("isConnectionAlive detects null connections", async () => {
     "test-queue",
     "test-source",
     "1.0.0",
-    { info: () => {} },
   );
   assertEquals(service.testIsConnectionAlive(null), false);
 });
@@ -41,7 +54,6 @@ Deno.test("isConnectionAlive handles malformed connection objects", async () => 
     "test-queue",
     "test-source",
     "1.0.0",
-    { info: () => {} },
   );
 
   // Test connection without .connection property
@@ -82,7 +94,6 @@ Deno.test("isChannelHealthy handles malformed states", async () => {
     "test-queue",
     "test-source",
     "1.0.0",
-    { info: () => {} },
   );
 
   // Test channel is null
@@ -135,7 +146,6 @@ Deno.test("isChannelHealthy handles exceptions gracefully", async () => {
     "test-queue",
     "test-source",
     "1.0.0",
-    { info: () => {} },
   );
 
   // Test with objects that throw on property access
@@ -145,7 +155,7 @@ Deno.test("isChannelHealthy handles exceptions gracefully", async () => {
     },
   };
   // Should return false on exception
-  assertEquals(service.testIsChannelHealthy(errorThrower as any), false);
+  assertEquals(service.testIsChannelHealthy(errorThrower as Channel), false);
 
   const errorThrower2 = {
     connection: {
@@ -154,5 +164,5 @@ Deno.test("isChannelHealthy handles exceptions gracefully", async () => {
       },
     },
   };
-  assertEquals(service.testIsChannelHealthy(errorThrower2 as any), false);
+  assertEquals(service.testIsChannelHealthy(errorThrower2 as Channel), false);
 });

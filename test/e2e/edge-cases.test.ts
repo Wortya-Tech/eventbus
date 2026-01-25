@@ -5,11 +5,7 @@ import {
   connectToRabbitMQ,
   createConsumer,
   createExchangeName,
-  createProducer,
   createQueueName,
-  createTestData,
-  encodeTestData,
-  sleep,
 } from "./helpers.ts";
 
 Deno.test("should log warning when subscribing existing key", async () => {

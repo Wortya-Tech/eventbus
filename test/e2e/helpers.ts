@@ -4,8 +4,6 @@ import { setTimeout as nodeSetTimeout } from "node:timers/promises";
 import { connect as amqpConnect } from "amqplib";
 import type { Channel, ChannelModel } from "amqplib";
 import { EventBusService } from "../../src/eventBus/index.ts";
-import { Writable } from "node:stream";
-import pino from "pino";
 
 export const rabbitMQUrl = "amqp://guest:guest@localhost:5672";
 
@@ -217,11 +215,11 @@ export function decodeTestData(buffer: Buffer): TestData {
   return JSON.parse(new TextDecoder().decode(buffer));
 }
 
-type RetryTracker ={
-    attempts: number;
-    failures: number;
-    lastError?: Error;
-}
+type RetryTracker = {
+  attempts: number;
+  failures: number;
+  lastError?: Error;
+};
 
 export function createRetryTracker(): RetryTracker {
   return { attempts: 0, failures: 0 };

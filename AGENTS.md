@@ -20,61 +20,48 @@ fanaticjs/
 ### Setup
 
 ```bash
-# Install dependencies
-bun install
-
 # Type-check
-bun run typecheck
+deno check src/**/*.ts test/**/*.ts
 
 # Lint
-bun run lint
+deno lint
 
 # Format
-bun run format
+deno fmt
 
 # Format check
-bun run format:check
+deno fmt --check
 ```
 
 ### Testing
 
 ```bash
-# Run all tests (coverage included)
-bun test --coverage
+# Run all tests
+deno test -A
 
 # Run only unit tests
-bun run test:unit
-
-# Run only integration tests (requires RabbitMQ running locally)
-bun run test:integration
+deno test -A test/unit
 
 # Run E2E tests with Docker Compose (starts RabbitMQ automatically)
-bun run test:e2e
-
-# Run tests in watch mode
-bun test --watch
+deno task rabbitmq:start
+deno test -A test/e2e
+deno task rabbitmq:stop
 
 # Run specific test file
-bun test test/unit/EventBusService.test.ts
+deno test -A test/unit/EventBusService.test.ts
 
-# Cleanup Docker containers if needed
-bun run test:e2e:cleanup
+# Start RabbitMQ for manual E2E testing
+deno task rabbitmq:start
+
+# Stop RabbitMQ
+deno task rabbitmq:stop
 ```
 
-### Building
+### Publishing
 
 ```bash
-# Clean dist directory
-bun run clean
-
-# Build library (ESM and CJS outputs)
-bun run build
-
-# Build types only
-bun run build:types
-
-# Build bundles only
-bun run build:bundles
+# Publish to JSR
+deno publish --allow-slow-types
 ```
 
 ## Code Style Guidelines
@@ -238,33 +225,30 @@ const isIntentional = intentionalCloseMap.get(connection);
 - Use flags to prevent concurrent reconnections
 - Restart consumers after successful reconnect
 
-## Build/Lint/Test Commands (Future)
-
-When test framework is configured:
+## Testing Commands
 
 ```bash
 # Run all tests
-npm test
+deno task test
 
-# Run single test file (once configuration exists)
-npm test path/to/test.spec.ts
+# Run only unit tests
+deno task test:unit
 
-# Run tests matching pattern
-npm test -- --run "**/test*.ts"
+# Run E2E tests (automatically starts RabbitMQ with Docker Compose)
+deno task test:e2e
 
-# Watch mode
-npm test -- --watch
+# Run specific test file
+deno test test/unit/EventBusService.test.ts
 ```
 
 ## Dependencies
 
-- `amqplib`: RabbitMQ client library
-- `pino`: Logger
-- `node:crypto`: UUID generation
+- `amqplib` (npm): RabbitMQ client library
+- `pino` (npm): Logger
+- `node:crypto`: UUID generation (Deno's Node.js compatibility layer)
+- `@std/assert` (jsr): Testing utilities
 
 ## Notes
 
-- Portuguese README documents architecture with mermaid diagrams
-- ES modules (uses `node:` protocol for Node modules)
-- Node.js native crypto module for UUID generation
-- No explicit TypeScript config yet; add `tsconfig.json` when needed
+- ES modules using `node:` protocol for Node.js compatibility layer in Deno
+- No explicit TypeScript config needed (configured in deno.json)

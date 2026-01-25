@@ -198,19 +198,25 @@ This project uses Deno runtime with tasks defined in `deno.json`.
 
 ```bash
 # Type check
-deno task check
+deno check src/**/*.ts test/**/*.ts
 
 # Format code
-deno task fmt
-deno task fmt:check
+deno fmt
+deno fmt --check
 
 # Lint
 deno lint
 
-# Run tests
-deno task test
-deno task test:unit
-deno task test:e2e
+# Run all tests
+deno test -A
+
+# Run unit tests only
+deno test -A test/unit
+
+# Run E2E tests (start RabbitMQ first)
+deno task rabbitmq:start
+deno test -A test/e2e
+deno task rabbitmq:stop
 
 # Publish to JSR
 deno publish --allow-slow-types
@@ -222,10 +228,10 @@ List all tasks: `deno task`
 
 ```bash
 # Start RabbitMQ
-docker compose up -d
+deno task rabbitmq:start
 
 # Stop RabbitMQ
-docker compose down
+deno task rabbitmq:stop
 ```
 
 RabbitMQ management UI: http://localhost:15672 (guest/guest)
