@@ -1,0 +1,48 @@
+{
+  "name": "@scope/fanaticjs",
+  "version": "0.1.0",
+  "exports": "./src/eventBus/index.ts",
+  "compilerOptions": {
+    "lib": ["ES2022", "deno.ns", "deno.unstable"],
+    "module": "ESNext",
+    "strict": true
+  },
+  "tasks": {
+    "check": "deno check src/**/*.ts test/**/*.ts",
+    "fmt": "deno fmt",
+    "fmt:check": "deno fmt --check",
+    "lint": "deno lint",
+    "test": "deno test -A",
+    "test:unit": "deno test test/unit -A",
+    "test:e2e": "docker compose up -d && sleep 15 && deno test test/e2e -A && docker compose down",
+    "rabbitmq:start": "docker compose up -d",
+    "rabbitmq:stop": "docker compose down",
+    "publish": "deno publish --allow-slow-types"
+  },
+  "publish": {
+    "include": ["src", "LICENSE", "README.md"],
+    "exclude": ["test", "deno.lock"]
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1.0.2"
+  },
+  "lint": {
+    "include": ["src", "test"],
+    "rules": {
+      "tags": ["recommended"]
+    }
+  },
+  "fmt": {
+    "singleQuote": false,
+    "lineWidth": 100
+  },
+  "permissions": {
+    "default": {
+      "read": [".", "src", "test"],
+      "net": true,
+      "env": true,
+      "sys": true,
+      "run": ["allow"]
+    }
+  }
+}
