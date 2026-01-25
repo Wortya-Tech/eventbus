@@ -1,23 +1,19 @@
 {
-  "name": "@scope/fanaticjs",
+  "name": "fanaticjs",
   "version": "0.1.0",
+  "license": "GPLv3",
   "exports": "./src/eventBus/index.ts",
+  "description": "RabbitMQ library for Deno implementing independent queues and events using fanout strategy.",
   "compilerOptions": {
-    "lib": ["ES2022", "deno.ns", "deno.unstable"],
+    "lib": ["ES2022", "deno.ns"],
     "module": "ESNext",
     "strict": true
   },
   "tasks": {
-    "check": "deno check src/**/*.ts test/**/*.ts",
-    "fmt": "deno fmt",
-    "fmt:check": "deno fmt --check",
-    "lint": "deno lint",
-    "test": "deno test -A",
     "test:unit": "deno test test/unit -A",
     "test:e2e": "docker compose up -d && sleep 15 && deno test test/e2e -A && docker compose down",
     "rabbitmq:start": "docker compose up -d",
-    "rabbitmq:stop": "docker compose down",
-    "publish": "deno publish --allow-slow-types"
+    "rabbitmq:stop": "docker compose down"
   },
   "publish": {
     "include": ["src", "LICENSE", "README.md"],
