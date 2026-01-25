@@ -4,6 +4,8 @@ import { setTimeout as nodeSetTimeout } from "node:timers/promises";
 import { connect as amqpConnect } from "amqplib";
 import type { Channel, ChannelModel } from "amqplib";
 import { EventBusService } from "../../src/eventBus/index.ts";
+import { Writable } from "node:stream";
+import pino from "pino";
 
 export const rabbitMQUrl = "amqp://guest:guest@localhost:5672";
 
@@ -152,6 +154,7 @@ export async function createProducer(
   producerQueueName?: string,
   rabbitmqUrl?: string,
   ownsConnection = false,
+  logger?: import("pino").Logger,
 ): Promise<EventBusService> {
   const config = testConfig;
   const queueName = producerQueueName || createQueueName("producer");
@@ -160,7 +163,7 @@ export async function createProducer(
     queueName,
     "test-producer",
     "1.0.0",
-    undefined,
+    logger,
     config.MAX_RETRIES,
     config.RETRY_DELAY,
   );
@@ -174,6 +177,7 @@ export async function createConsumer(
   connection: ChannelModel,
   ownsConnection = false,
   rabbitmqUrl?: string,
+  logger?: import("pino").Logger,
 ): Promise<EventBusService> {
   const config = testConfig;
   const service = new EventBusService(
@@ -181,7 +185,7 @@ export async function createConsumer(
     queueName,
     "test-consumer",
     "1.0.0",
-    undefined,
+    logger,
     config.MAX_RETRIES,
     config.RETRY_DELAY,
     config.MAX_CONNECTION_RETRIES,

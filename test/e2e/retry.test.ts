@@ -27,7 +27,7 @@ Deno.test("should retry failed handler and eventually succeed", async () => {
       exchangeName,
       connection,
       undefined,
-      "amqp://guest:guest:localhost:5672",
+      "amqp://guest:guest@localhost:5672",
       false,
     );
     services.push(producer);
