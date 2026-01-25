@@ -1,0 +1,83 @@
+{
+  "scriptId": "380",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/querystringify/2.2.0/index.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 2794,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 2793,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 2787,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "decode",
+      "ranges": [
+        {
+          "startOffset": 444,
+          "endOffset": 573,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "encode",
+      "ranges": [
+        {
+          "startOffset": 747,
+          "endOffset": 856,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "querystring",
+      "ranges": [
+        {
+          "startOffset": 1003,
+          "endOffset": 1612,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "querystringify",
+      "ranges": [
+        {
+          "startOffset": 1804,
+          "endOffset": 2690,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

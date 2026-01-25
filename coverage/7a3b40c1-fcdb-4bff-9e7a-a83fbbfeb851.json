@@ -1,0 +1,28 @@
+{
+  "scriptId": "333",
+  "url": "file:///home/v_raton/git/personal/fanaticjs/test/unit/ConnectionProvider.test.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 318,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 162,
+          "endOffset": 315,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

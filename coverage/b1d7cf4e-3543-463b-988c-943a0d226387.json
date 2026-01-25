@@ -1,0 +1,396 @@
+{
+  "scriptId": "413",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/sonic-boom/4.2.0/index.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 17288,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 17287,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 17281,
+          "count": 1
+        },
+        {
+          "startOffset": 819,
+          "endOffset": 827,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "openFile",
+      "ranges": [
+        {
+          "startOffset": 899,
+          "endOffset": 2668,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "SonicBoom",
+      "ranges": [
+        {
+          "startOffset": 2670,
+          "endOffset": 7414,
+          "count": 8
+        },
+        {
+          "startOffset": 2734,
+          "endOffset": 2770,
+          "count": 0
+        },
+        {
+          "startOffset": 2912,
+          "endOffset": 2917,
+          "count": 0
+        },
+        {
+          "startOffset": 2929,
+          "endOffset": 2936,
+          "count": 0
+        },
+        {
+          "startOffset": 3528,
+          "endOffset": 3536,
+          "count": 0
+        },
+        {
+          "startOffset": 3710,
+          "endOffset": 4022,
+          "count": 0
+        },
+        {
+          "startOffset": 4058,
+          "endOffset": 4093,
+          "count": 0
+        },
+        {
+          "startOffset": 4389,
+          "endOffset": 4519,
+          "count": 0
+        },
+        {
+          "startOffset": 4620,
+          "endOffset": 4767,
+          "count": 0
+        },
+        {
+          "startOffset": 4807,
+          "endOffset": 4896,
+          "count": 0
+        },
+        {
+          "startOffset": 7282,
+          "endOffset": 7412,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 3593,
+          "endOffset": 3603,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fsWriteSync",
+      "ranges": [
+        {
+          "startOffset": 3903,
+          "endOffset": 3948,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "fsWrite",
+      "ranges": [
+        {
+          "startOffset": 3963,
+          "endOffset": 4018,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "fsWriteSync",
+      "ranges": [
+        {
+          "startOffset": 4254,
+          "endOffset": 4307,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "fsWrite",
+      "ranges": [
+        {
+          "startOffset": 4322,
+          "endOffset": 4385,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 4591,
+          "endOffset": 4615,
+          "count": 8
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "SonicBoom.release",
+      "ranges": [
+        {
+          "startOffset": 4915,
+          "endOffset": 7124,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 7151,
+          "endOffset": 7246,
+          "count": 16
+        },
+        {
+          "startOffset": 7195,
+          "endOffset": 7242,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 7327,
+          "endOffset": 7349,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "releaseWritingBuf",
+      "ranges": [
+        {
+          "startOffset": 7800,
+          "endOffset": 8370,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "emitDrain",
+      "ranges": [
+        {
+          "startOffset": 8372,
+          "endOffset": 8545,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "mergeBuf",
+      "ranges": [
+        {
+          "startOffset": 8582,
+          "endOffset": 8756,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "write",
+      "ranges": [
+        {
+          "startOffset": 8758,
+          "endOffset": 9344,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeBuffer",
+      "ranges": [
+        {
+          "startOffset": 9346,
+          "endOffset": 10025,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "callFlushCallbackOnDrain",
+      "ranges": [
+        {
+          "startOffset": 10027,
+          "endOffset": 10627,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "flush",
+      "ranges": [
+        {
+          "startOffset": 10629,
+          "endOffset": 11142,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "flushBuffer",
+      "ranges": [
+        {
+          "startOffset": 11144,
+          "endOffset": 11686,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "SonicBoom.reopen",
+      "ranges": [
+        {
+          "startOffset": 11717,
+          "endOffset": 12394,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "SonicBoom.end",
+      "ranges": [
+        {
+          "startOffset": 12422,
+          "endOffset": 12803,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "flushSync",
+      "ranges": [
+        {
+          "startOffset": 12805,
+          "endOffset": 13837,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "flushBufferSync",
+      "ranges": [
+        {
+          "startOffset": 13839,
+          "endOffset": 14776,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "SonicBoom.destroy",
+      "ranges": [
+        {
+          "startOffset": 14808,
+          "endOffset": 14882,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "actualWrite",
+      "ranges": [
+        {
+          "startOffset": 14884,
+          "endOffset": 15277,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "actualWriteBuffer",
+      "ranges": [
+        {
+          "startOffset": 15279,
+          "endOffset": 15959,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "actualClose",
+      "ranges": [
+        {
+          "startOffset": 15961,
+          "endOffset": 16774,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

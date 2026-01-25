@@ -1,0 +1,411 @@
+{
+  "scriptId": "417",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/thread-stream/4.0.0/index.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 14220,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 14219,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 14213,
+          "count": 1
+        },
+        {
+          "startOffset": 1103,
+          "endOffset": 1129,
+          "count": 0
+        },
+        {
+          "startOffset": 1160,
+          "endOffset": 1187,
+          "count": 0
+        },
+        {
+          "startOffset": 1233,
+          "endOffset": 1246,
+          "count": 0
+        },
+        {
+          "startOffset": 1264,
+          "endOffset": 1278,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "FakeWeakRef",
+      "ranges": [
+        {
+          "startOffset": 750,
+          "endOffset": 799,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "deref",
+      "ranges": [
+        {
+          "startOffset": 803,
+          "endOffset": 840,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "register",
+      "ranges": [
+        {
+          "startOffset": 879,
+          "endOffset": 893,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "unregister",
+      "ranges": [
+        {
+          "startOffset": 897,
+          "endOffset": 913,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1322,
+          "endOffset": 1396,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "createWorker",
+      "ranges": [
+        {
+          "startOffset": 1399,
+          "endOffset": 2369,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "drain",
+      "ranges": [
+        {
+          "startOffset": 2371,
+          "endOffset": 2526,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "nextFlush",
+      "ranges": [
+        {
+          "startOffset": 2528,
+          "endOffset": 4617,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "onWorkerMessage",
+      "ranges": [
+        {
+          "startOffset": 4619,
+          "endOffset": 5453,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "onWorkerExit",
+      "ranges": [
+        {
+          "startOffset": 5455,
+          "endOffset": 5794,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "ThreadStream",
+      "ranges": [
+        {
+          "startOffset": 5840,
+          "endOffset": 6841,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "write",
+      "ranges": [
+        {
+          "startOffset": 6845,
+          "endOffset": 7799,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "end",
+      "ranges": [
+        {
+          "startOffset": 7803,
+          "endOffset": 7912,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "flush",
+      "ranges": [
+        {
+          "startOffset": 7916,
+          "endOffset": 8657,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "flushSync",
+      "ranges": [
+        {
+          "startOffset": 8661,
+          "endOffset": 8772,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "unref",
+      "ranges": [
+        {
+          "startOffset": 8776,
+          "endOffset": 8814,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "ref",
+      "ranges": [
+        {
+          "startOffset": 8818,
+          "endOffset": 8852,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get ready",
+      "ranges": [
+        {
+          "startOffset": 8856,
+          "endOffset": 8903,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get destroyed",
+      "ranges": [
+        {
+          "startOffset": 8907,
+          "endOffset": 8962,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get closed",
+      "ranges": [
+        {
+          "startOffset": 8966,
+          "endOffset": 9015,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get writable",
+      "ranges": [
+        {
+          "startOffset": 9019,
+          "endOffset": 9097,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get writableEnded",
+      "ranges": [
+        {
+          "startOffset": 9101,
+          "endOffset": 9157,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get writableFinished",
+      "ranges": [
+        {
+          "startOffset": 9161,
+          "endOffset": 9222,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get writableNeedDrain",
+      "ranges": [
+        {
+          "startOffset": 9226,
+          "endOffset": 9289,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get writableObjectMode",
+      "ranges": [
+        {
+          "startOffset": 9293,
+          "endOffset": 9341,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get writableErrored",
+      "ranges": [
+        {
+          "startOffset": 9345,
+          "endOffset": 9404,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "error",
+      "ranges": [
+        {
+          "startOffset": 9408,
+          "endOffset": 9498,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "destroy",
+      "ranges": [
+        {
+          "startOffset": 9500,
+          "endOffset": 9975,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "write",
+      "ranges": [
+        {
+          "startOffset": 9977,
+          "endOffset": 10353,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "end",
+      "ranges": [
+        {
+          "startOffset": 10355,
+          "endOffset": 11584,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeSync",
+      "ranges": [
+        {
+          "startOffset": 11586,
+          "endOffset": 13325,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "flushSync",
+      "ranges": [
+        {
+          "startOffset": 13327,
+          "endOffset": 14179,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

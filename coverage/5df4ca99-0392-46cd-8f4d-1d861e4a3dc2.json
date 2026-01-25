@@ -1,0 +1,72 @@
+{
+  "scriptId": "397",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/pino-std-serializers/7.1.0/index.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 1518,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 1517,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 1511,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "wrapErrorSerializer",
+      "ranges": [
+        {
+          "startOffset": 709,
+          "endOffset": 932,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "wrapRequestSerializer",
+      "ranges": [
+        {
+          "startOffset": 960,
+          "endOffset": 1218,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "wrapResponseSerializer",
+      "ranges": [
+        {
+          "startOffset": 1247,
+          "endOffset": 1506,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

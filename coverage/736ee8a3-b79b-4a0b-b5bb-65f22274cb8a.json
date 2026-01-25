@@ -1,0 +1,369 @@
+{
+  "scriptId": "381",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/amqplib/0.10.9/lib/connection.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 21776,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 21775,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 21769,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "Connection",
+      "ranges": [
+        {
+          "startOffset": 1389,
+          "endOffset": 1864,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "sendProtocolHeader",
+      "ranges": [
+        {
+          "startOffset": 2120,
+          "endOffset": 2190,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "open",
+      "ranges": [
+        {
+          "startOffset": 2794,
+          "endOffset": 7621,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "close",
+      "ranges": [
+        {
+          "startOffset": 9765,
+          "endOffset": 9928,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "closeBecause",
+      "ranges": [
+        {
+          "startOffset": 10148,
+          "endOffset": 10403,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "closeWithError",
+      "ranges": [
+        {
+          "startOffset": 10407,
+          "endOffset": 10517,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "onSocketError",
+      "ranges": [
+        {
+          "startOffset": 10521,
+          "endOffset": 10839,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "toClosing",
+      "ranges": [
+        {
+          "startOffset": 11038,
+          "endOffset": 11527,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "_closeChannels",
+      "ranges": [
+        {
+          "startOffset": 11531,
+          "endOffset": 11771,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "toClosed",
+      "ranges": [
+        {
+          "startOffset": 11833,
+          "endOffset": 12481,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "_updateSecret",
+      "ranges": [
+        {
+          "startOffset": 12485,
+          "endOffset": 12658,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "startHeartbeater",
+      "ranges": [
+        {
+          "startOffset": 12671,
+          "endOffset": 13206,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "freshChannel",
+      "ranges": [
+        {
+          "startOffset": 13793,
+          "endOffset": 14380,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "releaseChannel",
+      "ranges": [
+        {
+          "startOffset": 14384,
+          "endOffset": 14589,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "acceptLoop",
+      "ranges": [
+        {
+          "startOffset": 14593,
+          "endOffset": 14859,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "step",
+      "ranges": [
+        {
+          "startOffset": 14863,
+          "endOffset": 15155,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "checkSend",
+      "ranges": [
+        {
+          "startOffset": 15159,
+          "endOffset": 15273,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "checkRecv",
+      "ranges": [
+        {
+          "startOffset": 15277,
+          "endOffset": 15391,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "sendBytes",
+      "ranges": [
+        {
+          "startOffset": 15395,
+          "endOffset": 15484,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "sendHeartbeat",
+      "ranges": [
+        {
+          "startOffset": 15488,
+          "endOffset": 15558,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "sendMethod",
+      "ranges": [
+        {
+          "startOffset": 15562,
+          "endOffset": 15775,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "sendMessage",
+      "ranges": [
+        {
+          "startOffset": 15779,
+          "endOffset": 17519,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "sendContent",
+      "ranges": [
+        {
+          "startOffset": 17523,
+          "endOffset": 18147,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "recvFrame",
+      "ranges": [
+        {
+          "startOffset": 18151,
+          "endOffset": 18618,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "mainAccept",
+      "ranges": [
+        {
+          "startOffset": 18649,
+          "endOffset": 19056,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "channel0",
+      "ranges": [
+        {
+          "startOffset": 19253,
+          "endOffset": 20718,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "invalidOp",
+      "ranges": [
+        {
+          "startOffset": 20720,
+          "endOffset": 20830,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "invalidateSend",
+      "ranges": [
+        {
+          "startOffset": 20832,
+          "endOffset": 20962,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "wrapStream",
+      "ranges": [
+        {
+          "startOffset": 21206,
+          "endOffset": 21486,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "isFatalError",
+      "ranges": [
+        {
+          "startOffset": 21488,
+          "endOffset": 21681,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

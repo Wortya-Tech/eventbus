@@ -1,0 +1,349 @@
+{
+  "scriptId": "336",
+  "url": "file:///home/v_raton/git/personal/fanaticjs/test/e2e/helpers.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 5501,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "connectToRabbitMQ",
+      "ranges": [
+        {
+          "startOffset": 461,
+          "endOffset": 567,
+          "count": 3
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "waitForRabbitMQ",
+      "ranges": [
+        {
+          "startOffset": 575,
+          "endOffset": 863,
+          "count": 3
+        },
+        {
+          "startOffset": 773,
+          "endOffset": 812,
+          "count": 0
+        },
+        {
+          "startOffset": 816,
+          "endOffset": 862,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createExchangeName",
+      "ranges": [
+        {
+          "startOffset": 871,
+          "endOffset": 951,
+          "count": 2
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createQueueName",
+      "ranges": [
+        {
+          "startOffset": 959,
+          "endOffset": 1031,
+          "count": 2
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "sleep",
+      "ranges": [
+        {
+          "startOffset": 1039,
+          "endOffset": 1090,
+          "count": 8
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "waitForMessage",
+      "ranges": [
+        {
+          "startOffset": 1098,
+          "endOffset": 1427,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "waitForMessages",
+      "ranges": [
+        {
+          "startOffset": 1435,
+          "endOffset": 1724,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "getQueueMessageCount",
+      "ranges": [
+        {
+          "startOffset": 1732,
+          "endOffset": 1881,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "consumeAndGetMessage",
+      "ranges": [
+        {
+          "startOffset": 1889,
+          "endOffset": 2169,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "cleanupService",
+      "ranges": [
+        {
+          "startOffset": 2177,
+          "endOffset": 2239,
+          "count": 5
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cleanupServices",
+      "ranges": [
+        {
+          "startOffset": 2247,
+          "endOffset": 2357,
+          "count": 2
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 2330,
+          "endOffset": 2352,
+          "count": 5
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cleanupExchange",
+      "ranges": [
+        {
+          "startOffset": 2365,
+          "endOffset": 2463,
+          "count": 2
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cleanupQueue",
+      "ranges": [
+        {
+          "startOffset": 2471,
+          "endOffset": 2557,
+          "count": 12
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cleanupExchangeAndQueues",
+      "ranges": [
+        {
+          "startOffset": 2565,
+          "endOffset": 2866,
+          "count": 2
+        },
+        {
+          "startOffset": 2743,
+          "endOffset": 2797,
+          "count": 4
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 2832,
+          "endOffset": 2861,
+          "count": 12
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createChannelSafely",
+      "ranges": [
+        {
+          "startOffset": 2874,
+          "endOffset": 3124,
+          "count": 2
+        },
+        {
+          "startOffset": 2980,
+          "endOffset": 3122,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cleanupWithGrace",
+      "ranges": [
+        {
+          "startOffset": 3132,
+          "endOffset": 3692,
+          "count": 2
+        },
+        {
+          "startOffset": 3508,
+          "endOffset": 3546,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createProducer",
+      "ranges": [
+        {
+          "startOffset": 3700,
+          "endOffset": 4139,
+          "count": 1
+        },
+        {
+          "startOffset": 3881,
+          "endOffset": 3911,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createConsumer",
+      "ranges": [
+        {
+          "startOffset": 4147,
+          "endOffset": 4571,
+          "count": 2
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createTestData",
+      "ranges": [
+        {
+          "startOffset": 4579,
+          "endOffset": 4731,
+          "count": 3
+        },
+        {
+          "startOffset": 4631,
+          "endOffset": 4671,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "encodeTestData",
+      "ranges": [
+        {
+          "startOffset": 4739,
+          "endOffset": 4816,
+          "count": 3
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "decodeTestData",
+      "ranges": [
+        {
+          "startOffset": 4824,
+          "endOffset": 4914,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "createRetryTracker",
+      "ranges": [
+        {
+          "startOffset": 4922,
+          "endOffset": 5004,
+          "count": 2
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createRetryHandler",
+      "ranges": [
+        {
+          "startOffset": 5012,
+          "endOffset": 5307,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "killChannel",
+      "ranges": [
+        {
+          "startOffset": 5315,
+          "endOffset": 5399,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "killConnection",
+      "ranges": [
+        {
+          "startOffset": 5407,
+          "endOffset": 5500,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "scriptId": "408",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/pino/10.3.0/lib/proto.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 7570,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 7569,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 7563,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get level",
+      "ranges": [
+        {
+          "startOffset": 1318,
+          "endOffset": 1361,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "set level",
+      "ranges": [
+        {
+          "startOffset": 1365,
+          "endOffset": 1407,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get levelVal",
+      "ranges": [
+        {
+          "startOffset": 1411,
+          "endOffset": 1455,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "set levelVal",
+      "ranges": [
+        {
+          "startOffset": 1459,
+          "endOffset": 1516,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "get msgPrefix",
+      "ranges": [
+        {
+          "startOffset": 1520,
+          "endOffset": 1566,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "prototype",
+      "ranges": [
+        {
+          "startOffset": 1570,
+          "endOffset": 1615,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "module.exports",
+      "ranges": [
+        {
+          "startOffset": 1945,
+          "endOffset": 1994,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "resetChildingsFormatter",
+      "ranges": [
+        {
+          "startOffset": 2028,
+          "endOffset": 2048,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "child",
+      "ranges": [
+        {
+          "startOffset": 2049,
+          "endOffset": 5302,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "bindings",
+      "ranges": [
+        {
+          "startOffset": 5304,
+          "endOffset": 5614,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "setBindings",
+      "ranges": [
+        {
+          "startOffset": 5616,
+          "endOffset": 5738,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "defaultMixinMergeStrategy",
+      "ranges": [
+        {
+          "startOffset": 6084,
+          "endOffset": 6198,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "write",
+      "ranges": [
+        {
+          "startOffset": 6200,
+          "endOffset": 7306,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "flush",
+      "ranges": [
+        {
+          "startOffset": 7308,
+          "endOffset": 7560,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

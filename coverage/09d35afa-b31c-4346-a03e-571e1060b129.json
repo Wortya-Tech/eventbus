@@ -1,0 +1,105 @@
+{
+  "scriptId": "416",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/pino/10.3.0/lib/transport.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 5583,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 5582,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 5576,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "setupOnExit",
+      "ranges": [
+        {
+          "startOffset": 502,
+          "endOffset": 741,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "hasPreloadFlags",
+      "ranges": [
+        {
+          "startOffset": 1085,
+          "endOffset": 1458,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "buildStream",
+      "ranges": [
+        {
+          "startOffset": 1460,
+          "endOffset": 2757,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "autoEnd",
+      "ranges": [
+        {
+          "startOffset": 2759,
+          "endOffset": 2900,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "flush",
+      "ranges": [
+        {
+          "startOffset": 2902,
+          "endOffset": 2950,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "transport",
+      "ranges": [
+        {
+          "startOffset": 2952,
+          "endOffset": 5545,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "scriptId": "418",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/thread-stream/4.0.0/lib/wait.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 2047,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 2046,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 2040,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "wait",
+      "ranges": [
+        {
+          "startOffset": 453,
+          "endOffset": 1223,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "waitDiff",
+      "ranges": [
+        {
+          "startOffset": 1225,
+          "endOffset": 2000,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

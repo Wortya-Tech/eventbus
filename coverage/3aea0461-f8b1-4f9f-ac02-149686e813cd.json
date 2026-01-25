@@ -1,0 +1,180 @@
+{
+  "scriptId": "415",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/on-exit-leak-free/2.1.2/index.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 2194,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 2193,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 2187,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "ensureRegistry",
+      "ranges": [
+        {
+          "startOffset": 361,
+          "endOffset": 474,
+          "count": 8
+        },
+        {
+          "startOffset": 420,
+          "endOffset": 472,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "install",
+      "ranges": [
+        {
+          "startOffset": 476,
+          "endOffset": 590,
+          "count": 8
+        },
+        {
+          "startOffset": 533,
+          "endOffset": 549,
+          "count": 7
+        },
+        {
+          "startOffset": 549,
+          "endOffset": 589,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "uninstall",
+      "ranges": [
+        {
+          "startOffset": 592,
+          "endOffset": 812,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "onExit",
+      "ranges": [
+        {
+          "startOffset": 814,
+          "endOffset": 855,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "onBeforeExit",
+      "ranges": [
+        {
+          "startOffset": 857,
+          "endOffset": 910,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "callRefs",
+      "ranges": [
+        {
+          "startOffset": 912,
+          "endOffset": 1232,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "clear",
+      "ranges": [
+        {
+          "startOffset": 1234,
+          "endOffset": 1415,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "_register",
+      "ranges": [
+        {
+          "startOffset": 1417,
+          "endOffset": 1677,
+          "count": 8
+        },
+        {
+          "startOffset": 1480,
+          "endOffset": 1539,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "register",
+      "ranges": [
+        {
+          "startOffset": 1679,
+          "endOffset": 1739,
+          "count": 8
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "registerBeforeExit",
+      "ranges": [
+        {
+          "startOffset": 1741,
+          "endOffset": 1817,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "unregister",
+      "ranges": [
+        {
+          "startOffset": 1819,
+          "endOffset": 2115,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

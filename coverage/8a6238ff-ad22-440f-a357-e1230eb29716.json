@@ -1,0 +1,90 @@
+{
+  "scriptId": "380",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/requires-port/1.0.0/index.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 983,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 982,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 976,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "required",
+      "ranges": [
+        {
+          "startOffset": 568,
+          "endOffset": 972,
+          "count": 8
+        },
+        {
+          "startOffset": 671,
+          "endOffset": 684,
+          "count": 0
+        },
+        {
+          "startOffset": 712,
+          "endOffset": 724,
+          "count": 0
+        },
+        {
+          "startOffset": 729,
+          "endOffset": 763,
+          "count": 0
+        },
+        {
+          "startOffset": 769,
+          "endOffset": 782,
+          "count": 0
+        },
+        {
+          "startOffset": 787,
+          "endOffset": 823,
+          "count": 0
+        },
+        {
+          "startOffset": 829,
+          "endOffset": 864,
+          "count": 0
+        },
+        {
+          "startOffset": 870,
+          "endOffset": 908,
+          "count": 0
+        },
+        {
+          "startOffset": 914,
+          "endOffset": 944,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

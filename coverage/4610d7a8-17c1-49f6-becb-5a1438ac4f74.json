@@ -1,0 +1,82 @@
+{
+  "scriptId": "333",
+  "url": "file:///home/v_raton/git/personal/fanaticjs/test/e2e/retry.test.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 4378,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 381,
+          "endOffset": 1469,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1536,
+          "endOffset": 3007,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 2229,
+          "endOffset": 2433,
+          "count": 3
+        },
+        {
+          "startOffset": 2342,
+          "endOffset": 2427,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 3070,
+          "endOffset": 4375,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 3615,
+          "endOffset": 3806,
+          "count": 3
+        },
+        {
+          "startOffset": 3751,
+          "endOffset": 3800,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

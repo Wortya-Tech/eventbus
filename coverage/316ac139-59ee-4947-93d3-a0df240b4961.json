@@ -1,0 +1,83 @@
+{
+  "scriptId": "402",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/pino-std-serializers/7.1.0/lib/req.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 2193,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 2192,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 2186,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get",
+      "ranges": [
+        {
+          "startOffset": 1006,
+          "endOffset": 1054,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "set",
+      "ranges": [
+        {
+          "startOffset": 1065,
+          "endOffset": 1115,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "reqSerializer",
+      "ranges": [
+        {
+          "startOffset": 1206,
+          "endOffset": 2105,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "mapHttpRequest",
+      "ranges": [
+        {
+          "startOffset": 2107,
+          "endOffset": 2183,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

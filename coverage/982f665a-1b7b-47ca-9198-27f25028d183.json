@@ -1,0 +1,593 @@
+{
+  "scriptId": "385",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/buffer-more-ints/1.0.0/buffer-more-ints.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 14308,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 14307,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 14301,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "isContiguousInt",
+      "ranges": [
+        {
+          "startOffset": 464,
+          "endOffset": 543,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "assertContiguousInt",
+      "ranges": [
+        {
+          "startOffset": 545,
+          "endOffset": 706,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 875,
+          "endOffset": 1593,
+          "count": 2
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1106,
+          "endOffset": 1589,
+          "count": 4
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1149,
+          "endOffset": 1583,
+          "count": 8
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "module.exports.<computed>",
+      "ranges": [
+        {
+          "startOffset": 1310,
+          "endOffset": 1385,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "module.exports.<computed>",
+      "ranges": [
+        {
+          "startOffset": 1490,
+          "endOffset": 1576,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "check_value",
+      "ranges": [
+        {
+          "startOffset": 1656,
+          "endOffset": 1889,
+          "count": 21
+        },
+        {
+          "startOffset": 1796,
+          "endOffset": 1871,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "check_bounds",
+      "ranges": [
+        {
+          "startOffset": 1943,
+          "endOffset": 2095,
+          "count": 21
+        },
+        {
+          "startOffset": 2034,
+          "endOffset": 2093,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "readUInt24BE",
+      "ranges": [
+        {
+          "startOffset": 2097,
+          "endOffset": 2204,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeUInt24BE",
+      "ranges": [
+        {
+          "startOffset": 2250,
+          "endOffset": 2458,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readUInt40BE",
+      "ranges": [
+        {
+          "startOffset": 2506,
+          "endOffset": 2632,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeUInt40BE",
+      "ranges": [
+        {
+          "startOffset": 2678,
+          "endOffset": 2907,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readUInt48BE",
+      "ranges": [
+        {
+          "startOffset": 2955,
+          "endOffset": 3077,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeUInt48BE",
+      "ranges": [
+        {
+          "startOffset": 3123,
+          "endOffset": 3357,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readUInt56BE",
+      "ranges": [
+        {
+          "startOffset": 3405,
+          "endOffset": 3570,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeUInt56BE",
+      "ranges": [
+        {
+          "startOffset": 3616,
+          "endOffset": 4263,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readUInt64BE",
+      "ranges": [
+        {
+          "startOffset": 4311,
+          "endOffset": 4433,
+          "count": 24
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "writeUInt64BE",
+      "ranges": [
+        {
+          "startOffset": 4479,
+          "endOffset": 5083,
+          "count": 21
+        },
+        {
+          "startOffset": 4767,
+          "endOffset": 5081,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "readUInt24LE",
+      "ranges": [
+        {
+          "startOffset": 5131,
+          "endOffset": 5240,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeUInt24LE",
+      "ranges": [
+        {
+          "startOffset": 5286,
+          "endOffset": 5495,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readUInt40LE",
+      "ranges": [
+        {
+          "startOffset": 5543,
+          "endOffset": 5669,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeUInt40LE",
+      "ranges": [
+        {
+          "startOffset": 5715,
+          "endOffset": 5944,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readUInt48LE",
+      "ranges": [
+        {
+          "startOffset": 5992,
+          "endOffset": 6114,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeUInt48LE",
+      "ranges": [
+        {
+          "startOffset": 6160,
+          "endOffset": 6394,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readUInt56LE",
+      "ranges": [
+        {
+          "startOffset": 6442,
+          "endOffset": 6607,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeUInt56LE",
+      "ranges": [
+        {
+          "startOffset": 6653,
+          "endOffset": 7300,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readUInt64LE",
+      "ranges": [
+        {
+          "startOffset": 7348,
+          "endOffset": 7470,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeUInt64LE",
+      "ranges": [
+        {
+          "startOffset": 7516,
+          "endOffset": 8120,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readInt24BE",
+      "ranges": [
+        {
+          "startOffset": 8169,
+          "endOffset": 8278,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeInt24BE",
+      "ranges": [
+        {
+          "startOffset": 8322,
+          "endOffset": 8535,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readInt40BE",
+      "ranges": [
+        {
+          "startOffset": 8581,
+          "endOffset": 8705,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeInt40BE",
+      "ranges": [
+        {
+          "startOffset": 8749,
+          "endOffset": 8988,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readInt48BE",
+      "ranges": [
+        {
+          "startOffset": 9034,
+          "endOffset": 9154,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeInt48BE",
+      "ranges": [
+        {
+          "startOffset": 9198,
+          "endOffset": 9444,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readInt56BE",
+      "ranges": [
+        {
+          "startOffset": 9490,
+          "endOffset": 9655,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeInt56BE",
+      "ranges": [
+        {
+          "startOffset": 9699,
+          "endOffset": 10359,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readInt64BE",
+      "ranges": [
+        {
+          "startOffset": 10405,
+          "endOffset": 10525,
+          "count": 6
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "writeInt64BE",
+      "ranges": [
+        {
+          "startOffset": 10569,
+          "endOffset": 11190,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readInt24LE",
+      "ranges": [
+        {
+          "startOffset": 11236,
+          "endOffset": 11345,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeInt24LE",
+      "ranges": [
+        {
+          "startOffset": 11389,
+          "endOffset": 11602,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readInt40LE",
+      "ranges": [
+        {
+          "startOffset": 11648,
+          "endOffset": 11772,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeInt40LE",
+      "ranges": [
+        {
+          "startOffset": 11816,
+          "endOffset": 12055,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readInt48LE",
+      "ranges": [
+        {
+          "startOffset": 12101,
+          "endOffset": 12221,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeInt48LE",
+      "ranges": [
+        {
+          "startOffset": 12265,
+          "endOffset": 12511,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readInt56LE",
+      "ranges": [
+        {
+          "startOffset": 12557,
+          "endOffset": 12722,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeInt56LE",
+      "ranges": [
+        {
+          "startOffset": 12766,
+          "endOffset": 13425,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "readInt64LE",
+      "ranges": [
+        {
+          "startOffset": 13471,
+          "endOffset": 13591,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "writeInt64LE",
+      "ranges": [
+        {
+          "startOffset": 13635,
+          "endOffset": 14254,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

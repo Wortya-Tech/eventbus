@@ -1,0 +1,94 @@
+{
+  "scriptId": "383",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/amqplib/0.10.9/lib/codec.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 12141,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 12140,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 12134,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "isFloatingPoint",
+      "ranges": [
+        {
+          "startOffset": 3370,
+          "endOffset": 3512,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "encodeTable",
+      "ranges": [
+        {
+          "startOffset": 3514,
+          "endOffset": 4027,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "encodeArray",
+      "ranges": [
+        {
+          "startOffset": 4029,
+          "endOffset": 4322,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "encodeFieldValue",
+      "ranges": [
+        {
+          "startOffset": 4324,
+          "endOffset": 9025,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "decodeFields",
+      "ranges": [
+        {
+          "startOffset": 9105,
+          "endOffset": 12044,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

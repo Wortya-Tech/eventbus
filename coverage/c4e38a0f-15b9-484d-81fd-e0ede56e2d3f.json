@@ -1,0 +1,138 @@
+{
+  "scriptId": "378",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/url-parse/1.5.10/index.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 16852,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 16851,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 16845,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "trimLeft",
+      "ranges": [
+        {
+          "startOffset": 882,
+          "endOffset": 979,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "sanitize",
+      "ranges": [
+        {
+          "startOffset": 1659,
+          "endOffset": 1816,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "lolcation",
+      "ranges": [
+        {
+          "startOffset": 2954,
+          "endOffset": 3840,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "isSpecial",
+      "ranges": [
+        {
+          "startOffset": 4038,
+          "endOffset": 4234,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "extractProtocol",
+      "ranges": [
+        {
+          "startOffset": 4761,
+          "endOffset": 5971,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "resolve",
+      "ranges": [
+        {
+          "startOffset": 6207,
+          "endOffset": 6798,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "Url",
+      "ranges": [
+        {
+          "startOffset": 7363,
+          "endOffset": 12161,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "set",
+      "ranges": [
+        {
+          "startOffset": 12767,
+          "endOffset": 14883,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "toString",
+      "ranges": [
+        {
+          "startOffset": 15091,
+          "endOffset": 16555,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

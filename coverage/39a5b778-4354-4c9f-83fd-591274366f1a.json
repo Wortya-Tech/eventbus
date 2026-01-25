@@ -1,0 +1,581 @@
+{
+  "scriptId": "394",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/amqplib/0.10.9/lib/channel.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 15439,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 15438,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 15432,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "Channel",
+      "ranges": [
+        {
+          "startOffset": 706,
+          "endOffset": 1552,
+          "count": 9
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1108,
+          "endOffset": 1161,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1215,
+          "endOffset": 1291,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1316,
+          "endOffset": 1462,
+          "count": 9
+        },
+        {
+          "startOffset": 1388,
+          "endOffset": 1456,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "setOptions",
+      "ranges": [
+        {
+          "startOffset": 1556,
+          "endOffset": 1609,
+          "count": 9
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "allocate",
+      "ranges": [
+        {
+          "startOffset": 1613,
+          "endOffset": 1711,
+          "count": 9
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "sendImmediately",
+      "ranges": [
+        {
+          "startOffset": 2289,
+          "endOffset": 2391,
+          "count": 105
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "sendOrEnqueue",
+      "ranges": [
+        {
+          "startOffset": 2623,
+          "endOffset": 2962,
+          "count": 90
+        },
+        {
+          "startOffset": 2684,
+          "endOffset": 2836,
+          "count": 75
+        },
+        {
+          "startOffset": 2836,
+          "endOffset": 2958,
+          "count": 15
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "sendMessage",
+      "ranges": [
+        {
+          "startOffset": 2966,
+          "endOffset": 3157,
+          "count": 7
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "_rpc",
+      "ranges": [
+        {
+          "startOffset": 3260,
+          "endOffset": 4833,
+          "count": 90
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "reply",
+      "ranges": [
+        {
+          "startOffset": 3322,
+          "endOffset": 4781,
+          "count": 90
+        },
+        {
+          "startOffset": 3444,
+          "endOffset": 3894,
+          "count": 0
+        },
+        {
+          "startOffset": 3902,
+          "endOffset": 4775,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "toClosed",
+      "ranges": [
+        {
+          "startOffset": 4873,
+          "endOffset": 5120,
+          "count": 9
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "toClosing",
+      "ranges": [
+        {
+          "startOffset": 5355,
+          "endOffset": 5826,
+          "count": 9
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "accept",
+      "ranges": [
+        {
+          "startOffset": 5513,
+          "endOffset": 5821,
+          "count": 9
+        },
+        {
+          "startOffset": 5696,
+          "endOffset": 5788,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "_rejectPending",
+      "ranges": [
+        {
+          "startOffset": 5830,
+          "endOffset": 6160,
+          "count": 9
+        },
+        {
+          "startOffset": 5981,
+          "endOffset": 5997,
+          "count": 0
+        },
+        {
+          "startOffset": 6088,
+          "endOffset": 6107,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "rej",
+      "ranges": [
+        {
+          "startOffset": 5854,
+          "endOffset": 5945,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "closeBecause",
+      "ranges": [
+        {
+          "startOffset": 6164,
+          "endOffset": 6418,
+          "count": 9
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "closeWithError",
+      "ranges": [
+        {
+          "startOffset": 6603,
+          "endOffset": 6992,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "acceptMessageFrame",
+      "ranges": [
+        {
+          "startOffset": 7376,
+          "endOffset": 7977,
+          "count": 18
+        },
+        {
+          "startOffset": 7471,
+          "endOffset": 7973,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "handleConfirm",
+      "ranges": [
+        {
+          "startOffset": 7981,
+          "endOffset": 8822,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "pushConfirmCallback",
+      "ranges": [
+        {
+          "startOffset": 8826,
+          "endOffset": 9055,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "onBufferDrain",
+      "ranges": [
+        {
+          "startOffset": 9059,
+          "endOffset": 9105,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "accept",
+      "ranges": [
+        {
+          "startOffset": 9109,
+          "endOffset": 11323,
+          "count": 109
+        },
+        {
+          "startOffset": 9171,
+          "endOffset": 9186,
+          "count": 6
+        },
+        {
+          "startOffset": 9209,
+          "endOffset": 9232,
+          "count": 12
+        },
+        {
+          "startOffset": 9237,
+          "endOffset": 9259,
+          "count": 12
+        },
+        {
+          "startOffset": 9264,
+          "endOffset": 9331,
+          "count": 18
+        },
+        {
+          "startOffset": 9393,
+          "endOffset": 9453,
+          "count": 0
+        },
+        {
+          "startOffset": 9458,
+          "endOffset": 9520,
+          "count": 0
+        },
+        {
+          "startOffset": 9525,
+          "endOffset": 9656,
+          "count": 1
+        },
+        {
+          "startOffset": 9662,
+          "endOffset": 10344,
+          "count": 0
+        },
+        {
+          "startOffset": 10350,
+          "endOffset": 10634,
+          "count": 0
+        },
+        {
+          "startOffset": 10640,
+          "endOffset": 11313,
+          "count": 90
+        },
+        {
+          "startOffset": 11145,
+          "endOffset": 11284,
+          "count": 15
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "invalidOp",
+      "ranges": [
+        {
+          "startOffset": 11843,
+          "endOffset": 11953,
+          "count": 27
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 11885,
+          "endOffset": 11950,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "invalidateSend",
+      "ranges": [
+        {
+          "startOffset": 11955,
+          "endOffset": 12084,
+          "count": 18
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "acceptDeliveryOrReturn",
+      "ranges": [
+        {
+          "startOffset": 12196,
+          "endOffset": 12606,
+          "count": 6
+        },
+        {
+          "startOffset": 12299,
+          "endOffset": 12450,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 12519,
+          "endOffset": 12602,
+          "count": 6
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "acceptMessage",
+      "ranges": [
+        {
+          "startOffset": 12705,
+          "endOffset": 14271,
+          "count": 6
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "headers",
+      "ranges": [
+        {
+          "startOffset": 12934,
+          "endOffset": 13414,
+          "count": 6
+        },
+        {
+          "startOffset": 13167,
+          "endOffset": 13289,
+          "count": 0
+        },
+        {
+          "startOffset": 13340,
+          "endOffset": 13410,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "content",
+      "ranges": [
+        {
+          "startOffset": 13515,
+          "endOffset": 14269,
+          "count": 6
+        },
+        {
+          "startOffset": 13677,
+          "endOffset": 13775,
+          "count": 0
+        },
+        {
+          "startOffset": 13917,
+          "endOffset": 14205,
+          "count": 0
+        },
+        {
+          "startOffset": 14211,
+          "endOffset": 14265,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "BaseChannel",
+      "ranges": [
+        {
+          "startOffset": 14399,
+          "endOffset": 14484,
+          "count": 9
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "registerConsumer",
+      "ranges": [
+        {
+          "startOffset": 14614,
+          "endOffset": 14691,
+          "count": 3
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "unregisterConsumer",
+      "ranges": [
+        {
+          "startOffset": 14695,
+          "endOffset": 14757,
+          "count": 4
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "dispatchMessage",
+      "ranges": [
+        {
+          "startOffset": 14761,
+          "endOffset": 15060,
+          "count": 7
+        },
+        {
+          "startOffset": 14948,
+          "endOffset": 15056,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "handleDelivery",
+      "ranges": [
+        {
+          "startOffset": 15064,
+          "endOffset": 15152,
+          "count": 6
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "handleCancel",
+      "ranges": [
+        {
+          "startOffset": 15156,
+          "endOffset": 15304,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

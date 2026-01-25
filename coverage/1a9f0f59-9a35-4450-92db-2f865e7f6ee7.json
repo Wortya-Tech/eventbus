@@ -1,0 +1,307 @@
+{
+  "scriptId": "410",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/pino/10.3.0/lib/tools.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 13166,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 13165,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 13159,
+          "count": 1
+        },
+        {
+          "startOffset": 1129,
+          "endOffset": 1157,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 979,
+          "endOffset": 993,
+          "count": 3
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "asString",
+      "ranges": [
+        {
+          "startOffset": 1131,
+          "endOffset": 1157,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "noop",
+      "ranges": [
+        {
+          "startOffset": 1171,
+          "endOffset": 1191,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "genLog",
+      "ranges": [
+        {
+          "startOffset": 1193,
+          "endOffset": 2516,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "_asString",
+      "ranges": [
+        {
+          "startOffset": 2702,
+          "endOffset": 3220,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "asJson",
+      "ranges": [
+        {
+          "startOffset": 3564,
+          "endOffset": 3825,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "_asJson",
+      "ranges": [
+        {
+          "startOffset": 4259,
+          "endOffset": 7257,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "asChindings",
+      "ranges": [
+        {
+          "startOffset": 7259,
+          "endOffset": 8251,
+          "count": 4
+        },
+        {
+          "startOffset": 7719,
+          "endOffset": 8235,
+          "count": 8
+        },
+        {
+          "startOffset": 7781,
+          "endOffset": 7894,
+          "count": 4
+        },
+        {
+          "startOffset": 8020,
+          "endOffset": 8045,
+          "count": 0
+        },
+        {
+          "startOffset": 8177,
+          "endOffset": 8185,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "hasBeenTampered",
+      "ranges": [
+        {
+          "startOffset": 8253,
+          "endOffset": 8351,
+          "count": 4
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "buildSafeSonicBoom",
+      "ranges": [
+        {
+          "startOffset": 8353,
+          "endOffset": 9228,
+          "count": 4
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 8613,
+          "endOffset": 8664,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "filterBrokenPipe",
+      "ranges": [
+        {
+          "startOffset": 8689,
+          "endOffset": 9226,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "autoEnd",
+      "ranges": [
+        {
+          "startOffset": 9230,
+          "endOffset": 9756,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "createArgsNormalizer",
+      "ranges": [
+        {
+          "startOffset": 9758,
+          "endOffset": 12016,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "normalizeArgs",
+      "ranges": [
+        {
+          "startOffset": 9816,
+          "endOffset": 12014,
+          "count": 4
+        },
+        {
+          "startOffset": 9947,
+          "endOffset": 10020,
+          "count": 0
+        },
+        {
+          "startOffset": 10058,
+          "endOffset": 10240,
+          "count": 0
+        },
+        {
+          "startOffset": 10317,
+          "endOffset": 10360,
+          "count": 0
+        },
+        {
+          "startOffset": 10386,
+          "endOffset": 11113,
+          "count": 0
+        },
+        {
+          "startOffset": 11363,
+          "endOffset": 11506,
+          "count": 0
+        },
+        {
+          "startOffset": 11573,
+          "endOffset": 11594,
+          "count": 0
+        },
+        {
+          "startOffset": 11914,
+          "endOffset": 11918,
+          "count": 0
+        },
+        {
+          "startOffset": 11929,
+          "endOffset": 11976,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "stringify",
+      "ranges": [
+        {
+          "startOffset": 12018,
+          "endOffset": 12335,
+          "count": 8
+        },
+        {
+          "startOffset": 12105,
+          "endOffset": 12333,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "buildFormatters",
+      "ranges": [
+        {
+          "startOffset": 12337,
+          "endOffset": 12436,
+          "count": 4
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "normalizeDestFileDescriptor",
+      "ranges": [
+        {
+          "startOffset": 12645,
+          "endOffset": 12983,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}

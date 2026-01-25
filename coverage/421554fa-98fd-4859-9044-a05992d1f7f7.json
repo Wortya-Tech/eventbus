@@ -1,0 +1,178 @@
+{
+  "scriptId": "390",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/amqplib/0.10.9/lib/bitset.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 3237,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 3236,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 3230,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "BitSet",
+      "ranges": [
+        {
+          "startOffset": 512,
+          "endOffset": 730,
+          "count": 6
+        },
+        {
+          "startOffset": 546,
+          "endOffset": 638,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "ensureSize",
+      "ranges": [
+        {
+          "startOffset": 776,
+          "endOffset": 961,
+          "count": 3
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "set",
+      "ranges": [
+        {
+          "startOffset": 1007,
+          "endOffset": 1217,
+          "count": 8
+        },
+        {
+          "startOffset": 1088,
+          "endOffset": 1156,
+          "count": 3
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "clear",
+      "ranges": [
+        {
+          "startOffset": 1263,
+          "endOffset": 1419,
+          "count": 8
+        },
+        {
+          "startOffset": 1346,
+          "endOffset": 1353,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get",
+      "ranges": [
+        {
+          "startOffset": 1465,
+          "endOffset": 1656,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "nextSetBit",
+      "ranges": [
+        {
+          "startOffset": 1787,
+          "endOffset": 2217,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "nextClearBit",
+      "ranges": [
+        {
+          "startOffset": 2264,
+          "endOffset": 2606,
+          "count": 8
+        },
+        {
+          "startOffset": 2354,
+          "endOffset": 2371,
+          "count": 3
+        },
+        {
+          "startOffset": 2371,
+          "endOffset": 2602,
+          "count": 5
+        },
+        {
+          "startOffset": 2507,
+          "endOffset": 2602,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "wordIndex",
+      "ranges": [
+        {
+          "startOffset": 2646,
+          "endOffset": 2714,
+          "count": 24
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "trailingZeros",
+      "ranges": [
+        {
+          "startOffset": 2745,
+          "endOffset": 3194,
+          "count": 5
+        },
+        {
+          "startOffset": 2937,
+          "endOffset": 2947,
+          "count": 0
+        },
+        {
+          "startOffset": 3139,
+          "endOffset": 3160,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

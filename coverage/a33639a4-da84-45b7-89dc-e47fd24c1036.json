@@ -1,0 +1,190 @@
+{
+  "scriptId": "384",
+  "url": "file:///home/v_raton/.cache/deno/npm/registry.npmjs.org/amqplib/0.10.9/lib/mux.js",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 0,
+          "endOffset": 3857,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 1,
+          "endOffset": 3856,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 214,
+          "endOffset": 3850,
+          "count": 1
+        },
+        {
+          "startOffset": 494,
+          "endOffset": 512,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "Mux",
+      "ranges": [
+        {
+          "startOffset": 529,
+          "endOffset": 823,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 742,
+          "endOffset": 817,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "_readIncoming",
+      "ranges": [
+        {
+          "startOffset": 1341,
+          "endOffset": 2910,
+          "count": 10
+        },
+        {
+          "startOffset": 1474,
+          "endOffset": 1481,
+          "count": 0
+        },
+        {
+          "startOffset": 2473,
+          "endOffset": 2684,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "roundrobin",
+      "ranges": [
+        {
+          "startOffset": 1671,
+          "endOffset": 1917,
+          "count": 20
+        },
+        {
+          "startOffset": 1739,
+          "endOffset": 1763,
+          "count": 39
+        },
+        {
+          "startOffset": 1765,
+          "endOffset": 1911,
+          "count": 19
+        },
+        {
+          "startOffset": 1825,
+          "endOffset": 1903,
+          "count": 9
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "_scheduleRead",
+      "ranges": [
+        {
+          "startOffset": 2914,
+          "endOffset": 3133,
+          "count": 10
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        {
+          "startOffset": 3001,
+          "endOffset": 3088,
+          "count": 10
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "pipeFrom",
+      "ranges": [
+        {
+          "startOffset": 3137,
+          "endOffset": 3748,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "enqueue",
+      "ranges": [
+        {
+          "startOffset": 3185,
+          "endOffset": 3278,
+          "count": 10
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cleanup",
+      "ranges": [
+        {
+          "startOffset": 3284,
+          "endOffset": 3517,
+          "count": 1
+        }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cleanupIfMe",
+      "ranges": [
+        {
+          "startOffset": 3522,
+          "endOffset": 3593,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "unpipeFrom",
+      "ranges": [
+        {
+          "startOffset": 3752,
+          "endOffset": 3818,
+          "count": 0
+        }
+      ],
+      "isBlockCoverage": false
+    }
+  ]
+}
