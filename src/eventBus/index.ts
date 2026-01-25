@@ -1,11 +1,11 @@
 // TODO: transformar isso de alguma forma em library
-import type { Channel, ChannelModel, MessageProperties, Message } from "npm:amqplib@0.10.9";
-import type { Logger } from "npm:pino@9.6.0";
-import { connect as rabbitmqConnect } from "npm:amqplib@0.10.9";
+import type { Channel, ChannelModel, MessageProperties, Message } from "amqplib";
+import type { Logger } from "pino";
+import { connect as rabbitmqConnect } from "amqplib";
 import { randomUUID } from "node:crypto";
-import { pino } from "npm:pino@9.6.0";
+import { pino } from "pino";
 import type { Buffer } from "node:buffer";
-import { setTimeout as setTimeoutFn } from "node:timers/promises";
+import { setTimeout as setTimeout } from "node:timers/promises";
 import { URL } from "node:url";
 
 type EventPublish = {
@@ -45,11 +45,11 @@ export class ConnectionProvider {
 
   private isConnectionAlive = (conn: ChannelModel): boolean => {
     try {
-      return (
-        conn &&
-        (conn as any).connection &&
-        !(conn as any).connection.stream?.destroyed
-      );
+      if (!conn) return false;
+      const con = conn as { connection?: { stream?: { destroyed?: boolean } } };
+      if (!con.connection) return false;
+      if (!con.connection.stream) return false;
+      return !con.connection.stream.destroyed;
     } catch {
       return false;
     }
@@ -144,7 +144,7 @@ export class EventBusService {
 
     // Setup channel event handlers for all services
     this.channel.on("error", async (err: unknown) => {
-      this.logger.error("RabbitMQ channel error:", err);
+      this.logger.error({ err }, "RabbitMQ channel error");
       const isIntentional = intentionalChannelCloseMap.get(this.channel!);
       if (!isIntentional) {
         await this.handleChannelReconnect();
@@ -180,10 +180,17 @@ export class EventBusService {
     await this.createQueue();
 
     // Only setup connection event handlers if this service owns the connection
-    if (this.ownsConnection) {
+if (this.ownsConnection) {
       // Handle connection errors
       this.connection.on("error", async (err: unknown) => {
-        this.logger.error("RabbitMQ connection error:", err);
+        this.logger.error({ err }, "RabbitMQ connection error");
+        const isIntentional = intentionalCloseMap.get(this.connection!);
+        if (!isIntentional) {
+          await this.handleConnectionReconnect();
+        }
+      });
+
+      this.connection.on("close", async () => {
         const isIntentional = intentionalCloseMap.get(this.connection!);
         if (!isIntentional) {
           await this.handleConnectionReconnect();
@@ -210,15 +217,11 @@ export class EventBusService {
 
   private isConnectionAlive(connection: ChannelModel): boolean {
     try {
-      // Check if connection exists and is not closed
-
-      return (
-        connection &&
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (connection as any).connection &&
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        !(connection as any).connection.stream?.destroyed
-      );
+      if (!connection) return false;
+      const con = connection as { connection?: { stream?: { destroyed?: boolean } } };
+      if (!con.connection) return false;
+      if (!con.connection.stream) return false;
+      return !con.connection.stream.destroyed;
     } catch {
       return false;
     }
@@ -227,13 +230,10 @@ export class EventBusService {
   private isChannelHealthy(channel?: Channel): boolean {
     try {
       if (!channel) return false;
-
-      return (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (channel as any).connection &&
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        !(channel as any).connection.stream?.destroyed
-      );
+      const ch = channel as { connection?: { stream?: { destroyed?: boolean } } };
+      if (!ch.connection) return false;
+      if (!ch.connection.stream) return false;
+      return !ch.connection.stream.destroyed;
     } catch {
       return false;
     }
@@ -268,25 +268,25 @@ export class EventBusService {
     this.channel = await this.connection.createChannel();
 
     // Re-setup channel event handlers
-    this.channel.on("error", async (err: unknown) => {
-      this.logger.error("RabbitMQ channel error:", err);
-      const isIntentional = intentionalChannelCloseMap.get(this.channel!);
-      if (!isIntentional) {
-        await this.handleChannelReconnect();
-      }
-    });
+  this.channel.on("error", async (err: unknown) => {
+    this.logger.error({ err }, "RabbitMQ channel error");
+    const isIntentional = intentionalChannelCloseMap.get(this.channel!);
+    if (!isIntentional) {
+      await this.handleChannelReconnect();
+    }
+  });
 
-    this.channel.on("close", async () => {
-      const isIntentional = intentionalChannelCloseMap.get(this.channel!);
-      if (isIntentional) {
-        this.logger.info("RabbitMQ channel closed intentionally");
-      } else {
-        this.logger.warn("RabbitMQ channel closed unexpectedly");
-        await this.handleChannelReconnect();
-      }
-    });
+  this.channel.on("close", async () => {
+    const isIntentional = intentionalChannelCloseMap.get(this.channel!);
+    if (isIntentional) {
+      this.logger.info("RabbitMQ channel closed intentionally");
+    } else {
+      this.logger.warn("RabbitMQ channel closed unexpectedly");
+      await this.handleChannelReconnect();
+    }
+  });
 
-    // Re-setup exchanges and queues
+  // Re-setup exchanges and queues
     await this.channel.assertExchange(this.exchangeName, "fanout", {
       durable: true,
     });
@@ -328,7 +328,7 @@ export class EventBusService {
       `Attempting to reconnect channel (attempt ${this.connectionRetryCount}/${this.MAX_CONNECTION_RETRIES}) in ${delay}ms`,
     );
 
-    await setTimeoutFn(delay);
+    await setTimeout(delay);
 
     try {
       // First, try to get a fresh connection if provider is available
@@ -347,7 +347,7 @@ export class EventBusService {
 
       // Re-setup channel event handlers
 this.channel.on("error", async (err: unknown) => {
-      this.logger.error("RabbitMQ channel error:", err);
+      this.logger.error({ err }, "RabbitMQ channel error");
         const isIntentional = intentionalChannelCloseMap.get(
           this.channel!,
         );
@@ -425,7 +425,7 @@ this.channel.on("error", async (err: unknown) => {
       `Attempting to reconnect (attempt ${this.connectionRetryCount}/${this.MAX_CONNECTION_RETRIES}) in ${delay}ms`,
     );
 
-    await setTimeoutFn(delay);
+    await setTimeout(delay);
 
     try {
       if (!this.rabbitmqUrl) {

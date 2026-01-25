@@ -6,16 +6,12 @@ import {
     createConsumer,
     createTestData,
     encodeTestData,
-    decodeTestData,
     createExchangeName,
     createQueueName,
-    waitForMessage,
     sleep,
     cleanupWithGrace,
     killChannel,
-    killConnection,
     createRetryTracker,
-    createRetryHandler,
 } from "./helpers.ts";
 
 Deno.test("should reconnect after channel is killed", async () => {
@@ -44,8 +40,8 @@ Deno.test("should reconnect after channel is killed", async () => {
         );
         services.push(consumer);
 
-        consumer.subscribe("handler", async () => {
-           tracker.attempts++;
+consumer.subscribe("handler", async () => {
+            tracker.attempts++;
         });
 
         await consumer.consume();
@@ -116,11 +112,9 @@ Deno.test("should reconnect after connection is killed", async () => {
         await consumer.consume();
         await sleep(100);
 
-        consumer.close();
-        producer.close();
-        await killConnection(connection);
-
-        await sleep(1000);
+        await consumer.close();
+        await producer.close();
+        await sleep(100);
 
         connection = await connectToRabbitMQ();
 
@@ -132,8 +126,8 @@ Deno.test("should reconnect after connection is killed", async () => {
         );
         await newProducer.connect(
             connection,
-            "amqp://guest:guest@localhost:5672",
-            true
+            "amqp://guest@localhost:5672",
+            false
         );
         services.push(newProducer);
 

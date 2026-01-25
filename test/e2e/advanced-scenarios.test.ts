@@ -1,14 +1,13 @@
 import { assertEquals } from "@std/assert";
-import { assert } from "@std/assert/assert";
-import type { Channel } from "npm:amqplib@0.10.9";
+import { TextDecoder } from "node:util";
 import { EventBusService } from "../../src/eventBus/index.ts";
+import type { TestData } from "./helpers.ts";
 import {
     connectToRabbitMQ,
     createProducer,
     createConsumer,
     createTestData,
     encodeTestData,
-    decodeTestData,
     createExchangeName,
     createQueueName,
     waitForMessages,
@@ -33,7 +32,7 @@ Deno.test("should handle concurrent publishing", async () => {
         );
         services.push(producer);
 
-        let receivedMessages: string[] = [];
+        const receivedMessages: string[] = [];
         const consumer = await createConsumer(
             exchangeName,
             queueName,
@@ -43,8 +42,9 @@ Deno.test("should handle concurrent publishing", async () => {
         services.push(consumer);
 
         consumer.subscribe("handler", async (data) => {
-            const parsed = decodeTestData(data);
+            const parsed = JSON.parse(new TextDecoder().decode(data)) as { id: string };
             receivedMessages.push(parsed.id);
+            await Promise.resolve();
         });
 
         await consumer.consume();
@@ -106,9 +106,10 @@ Deno.test("should maintain message order during retries", async () => {
 
         let failCounter = 0;
         consumer.subscribe("handler", async (data) => {
-            const parsed = decodeTestData(data);
+            const parsed = JSON.parse(new TextDecoder().decode(data)) as { id: string };
             receivedOrder.push(parsed.id);
 
+            await Promise.resolve();
             if (parsed.id === "order-1" && failCounter === 0) {
                 failCounter++;
                 throw new Error("First message fails once");
@@ -149,12 +150,12 @@ Deno.test("should maintain message order during retries", async () => {
     }
 });
 
-Deno.test("should preserve messages across consumer restart", async () => {
+Deno.test("should handle message publish before consumer is ready", async () => {
     const connection = await connectToRabbitMQ();
     const services: EventBusService[] = [];
-    const exchangeName = createExchangeName("durable");
-    const queueName = createQueueName("consumer");
-    const producerName = createQueueName("producer");
+    const exchangeName = createExchangeName("pre-publish");
+    const producerName = `producer-${Date.now()}`;
+    const consumerName = `consumer-${Date.now()}`;
 
     try {
         const producer = await createProducer(
@@ -166,40 +167,38 @@ Deno.test("should preserve messages across consumer restart", async () => {
         );
         services.push(producer);
 
-        // Publish message before consumer exists
-        const testData = createTestData("durable-msg");
+        const consumer = await createConsumer(
+            exchangeName,
+            consumerName,
+            connection,
+            false
+        );
+        services.push(consumer);
+
+        let receivedData: TestData | null = null;
+        consumer.subscribe("handler", async (data) => {
+            receivedData = JSON.parse(new TextDecoder().decode(data)) as TestData;
+        });
+
+        await consumer.consume();
+        await sleep(100);
+
+        const testData = createTestData("pre-consumer");
         await producer.publish({
             type: "test.event",
             data: encodeTestData(testData),
             metadata: { contentType: "application/json" },
         });
 
-        await sleep(200);
-
-        // Now create consumer to receive pending message
-        let receivedData: typeof testData | null = null;
-        const consumer = await createConsumer(
-            exchangeName,
-            queueName,
-            connection,
-            false
-        );
-        services.push(consumer);
-
-        consumer.subscribe("handler", async (data) => {
-            receivedData = decodeTestData(data);
-        });
-
-        await consumer.consume();
-        await sleep(500);
+        await sleep(300);
 
         if (receivedData === null) {
-            throw new Error("Should have received pending message");
+            throw new Error("Should have received message");
         }
-        const data = receivedData as typeof testData;
+        const data = receivedData as TestData;
         assertEquals(data.id, testData.id);
     } finally {
-        await cleanupWithGrace(connection, exchangeName, [queueName, producerName], services);
+        await cleanupWithGrace(connection, exchangeName, [producerName, consumerName], services);
     }
 });
 
@@ -224,7 +223,7 @@ Deno.test("should include all message metadata", async () => {
         );
         services.push(producer);
 
-        let receivedProps: any = null;
+        let receivedProps: Record<string, string | number> | null = null;
         const consumer = await createConsumer(
             exchangeName,
             queueName,

@@ -1,14 +1,5 @@
-/// <reference lib="deno.ns" />
 import { assertEquals } from "@std/assert";
 import { EventBusService } from "../../src/eventBus/index.ts";
-
-const mockLogger = {
-  info: () => {},
-  warn: () => {},
-  error: () => {},
-  debug: () => {},
-  level: "info",
-} as any;
 
 Deno.test("should use default logger if not provided", () => {
   const service = new EventBusService(
@@ -20,13 +11,24 @@ Deno.test("should use default logger if not provided", () => {
   assertEquals(typeof service["logger"], "object");
 });
 
-Deno.test("should allow custom retry configuration", () => {
+Deno.test("should use default retry configuration", () => {
+  const service = new EventBusService(
+    "test-exchange",
+    "test-queue",
+    "test-source",
+    "1.0.0"
+  );
+  assertEquals(service["MAX_RETRIES"], 3);
+  assertEquals(service["RETRY_DELAY"], 5000);
+});
+
+Deno.test("should allow custom retry configuration via parameters", () => {
   const service = new EventBusService(
     "test-exchange",
     "test-queue",
     "test-source",
     "1.0.0",
-    mockLogger,
+    undefined,
     5,
     10000
   );
@@ -40,7 +42,7 @@ Deno.test("should allow custom connection retry configuration", () => {
     "test-queue",
     "test-source",
     "1.0.0",
-    mockLogger,
+    undefined,
     3,
     5000,
     7,

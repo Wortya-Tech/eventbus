@@ -1,5 +1,4 @@
-/// <reference lib="deno.ns" />
-import { assertEquals, assertExists } from "@std/assert";
+import { assertEquals } from "@std/assert";
 import { EventBusService } from "../../src/eventBus/index.ts";
 
 Deno.test("should use default logger if not provided", () => {

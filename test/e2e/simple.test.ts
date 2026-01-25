@@ -20,7 +20,7 @@ Deno.test("should publish and consume message", async () => {
   await channel.bindQueue(queueName, exchangeName, "");
 
   const testPayload = { test: "data" };
-  let receivedData: any = null;
+  let receivedData: { test: string } | null = null;
 
   const consumerTag = (await channel.consume(queueName, async (msg: Message | null) => {
     if (msg) {
@@ -37,7 +37,11 @@ Deno.test("should publish and consume message", async () => {
 
   await setTimeoutFn(500);
 
-  assertEquals(receivedData.test, "data");
+  if (receivedData === null) {
+    throw new Error("No data received");
+  }
+  const data = receivedData as { test: string };
+  assertEquals(data.test, "data");
 
   await channel.cancel(consumerTag);
   await channel.close();

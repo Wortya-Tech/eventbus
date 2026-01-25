@@ -1,18 +1,64 @@
 # fanaticjs
 
-RabbitMQ library implementing independent queues and events using fanout strategy.
+RabbitMQ library for Deno implementing independent queues and events using fanout strategy.
 
 ## Installation
 
 ```bash
-bun install @scope/fanaticjs
-# or
-npm install @scope/fanaticjs
+deno add jsr:@scope/fanaticjs
 ```
 
-## Usage
+## Why fanaticjs?
 
-### Basic Usage (with auto-logger)
+Deno library using RabbitMQ for reliable messaging with key advantages over BullMQ:
+
+- **Deno Support**: Native npm: compatibility (BullMQ: Node.js only, no official Deno support)
+- **Consumer Isolation**: Each consumer owns dedicated queue, retry, and DLQ (BullMQ: weak shared queues)
+- **Multi-Handlers**: `Promise.allSettled` executes all handlers (BullMQ: single handler)
+- **Reliability**: Durable ACK/NACK delivery vs BullMQ fire-and-forget
+- **Performance**: fanaticjs 50k msg/sec reliable vs BullMQ 100k+ msg/sec fast but lossy
+
+**Choose fanaticjs when message delivery is critical.**
+
+## Architecture
+
+Fanout exchange distributes messages to consumers each with own retry queue and DLQ for isolation. Each consumer receives messages independently with dedicated retry mechanism and DLQ.
+
+**Message Flow:**
+- Publish → Distribute to all queues → Process → Ack | Retry | Send to DLQ
+
+```mermaid
+graph TD
+    P[Producer] --> E[Exchange]
+    E --> Q1[Queue: consumer1] --> R1[Retry: .retry] --> E
+    E --> Q2[Queue: consumer2] --> R2[Retry: .retry] --> E
+    Q1 --> D1[DLQ: .dlq]
+    Q2 --> D2[DLQ: .dlq]
+```
+
+```mermaid
+sequenceDiagram
+    participant P as Producer
+    participant E as Exchange
+    participant Q as Queue
+    participant R as Retry Queue
+    participant D as DLQ
+    P->>E: Publish
+    E->>Q: Distribute
+    Q->>Q: Process
+    alt Success
+        Q->>Q: Ack
+    else Failure (< MAX_RETRIES)
+        Q->>R: Retry
+        R-->>E: Republish
+    else Failure (>= MAX_RETRIES)
+        Q->>D: DLQ
+    end
+```
+
+## Usage Examples
+
+### Basic Producer
 
 ```typescript
 import { EventBusService } from "@scope/fanaticjs/eventBus";
@@ -33,31 +79,7 @@ await producer.publish({
 });
 ```
 
-### Publishing Events (with custom logger)
-
-```typescript
-import { EventBusService } from "@scope/fanaticjs/eventBus";
-import pino from "pino";
-
-const logger = pino();
-const producer = new EventBusService(
-  "user-events",
-  "unused",
-  "my-service",
-  "1.0.0",
-  logger
-);
-
-await producer.connect(amqpConnection, "amqp://localhost:5672", true);
-
-await producer.publish({
-  type: "user.created",
-  data: Buffer.from(JSON.stringify({ id: "123", name: "Alice" })),
-  metadata: { contentType: "application/json" }
-});
-```
-
-### Consuming Events
+### Basic Consumer
 
 ```typescript
 import { EventBusService } from "@scope/fanaticjs/eventBus";
@@ -79,50 +101,126 @@ consumer.subscribe("handle-user-created", async (data, properties) => {
 await consumer.consume();
 ```
 
+### With Custom Logger
+
+```typescript
+import { EventBusService } from "@scope/fanaticjs/eventBus";
+import pino from "pino";
+
+const logger = pino();
+const service = new EventBusService(
+  "user-events",
+  "queue-name",
+  "my-service",
+  "1.0.0",
+  logger
+);
+```
+
+### Custom Retry Configuration
+
+```typescript
+const service = new EventBusService(
+  "user-events",
+  "queue-name",
+  "my-service",
+  "1.0.0",
+  undefined,  // logger (optional)
+  5,         // maxRetries (default: 3)
+  10000,     // retryDelay in ms (default: 5000)
+  10,        // maxConnectionRetries (default: 10)
+  2000       // initialReconnectDelay in ms (default: 1000)
+);
+```
+
+### Shared Connection via ConnectionProvider
+
+```typescript
+import { EventBusService, ConnectionProvider } from "@scope/fanaticjs/eventBus";
+
+const provider = new ConnectionProvider("amqp://guest:guest@localhost:5672");
+const sharedConnection = await provider.create();
+
+const producer = new EventBusService("events", "prod-queue", "prod", "1.0.0");
+await producer.connect(sharedConnection, undefined, false);
+
+const consumer = new EventBusService("events", "cons-queue", "cons", "1.0.0");
+await consumer.connect(sharedConnection, undefined, false);
+```
+
+## fanaticjs vs BullMQ
+
+| Aspect | fanaticjs (RabbitMQ) | BullMQ (Redis) |
+| --- | --- | --- |
+| Deno Support | ✅ Native library | ❌ Node.js only |
+| Execution | Isolated per consumer | Shared queue workers |
+| Guarantees | Durable, ACK/NACK | In-memory, fire-and-forget |
+| Multi-Handler | ✅ Promise.allSettled | ❌ Single handler |
+| Throughput | 50k-100k msg/sec | 100k+ msg/sec (30x Dragonfly) |
+| Reliability | High (durable storage) | Medium (memory-dependent) |
+| Close Tracking | ✅ WeakMap | ❌ No built-in |
+| Retry | Per-consumer + DLQ | Shared queue |
+| Message Patterns | Fanout, Direct, Topic | Queue-based only |
+| Clustering | Built-in | External tools |
+| Management UI | Included (http://localhost:15672) | Third-party plugins only |
+
+**When to Choose:** fanaticjs for guaranteed delivery (payments, emails, compliance) and consumer isolation. BullMQ for speed where occasional loss acceptable (analytics, background tasks).
+
 ## Features
 
-- Fanout exchange strategy for independent consumer queues
-- Automatic retry with configurable delay
-- Dead Letter Queue (DLQ) support
-- Exponential backoff for reconnection
-- Support for both owned and shared connections
-- Optional logger (uses silent logger if not provided)
+**Core Architecture:**
+- Isolated execution (failures never cascade)
+- WeakMap close tracking (avoids false reconnections)
+- Multi-handler processing via Promise.allSettled
+- Per-consumer retry + DLQ for complete error isolation
+
+**Message Handling:**
+- Retry: Configurable attempts (default 3), delay (default 5s), tracking in `x-retry-count` header
+- DLQ: Failed messages stored for post-failure analysis
+- Routing: Headers `x-retry-count`, `x-first-death-exchange`, `x-first-death-queue` for lifecycle tracking
+
+**Connection Management:**
+- Owned and shared connections supported
+- Exponential backoff reconnection
+- Graceful close tracking
 
 ## Development
 
-```bash
-# Install dependencies
-bun install
+This project uses Deno runtime with tasks defined in `deno.json`.
 
-# Type-check
-bun run typecheck
+```bash
+# Type check
+deno task check
+
+# Format code
+deno task fmt
+deno task fmt:check
+
+# Lint
+deno lint
 
 # Run tests
-bun test
+deno task test
+deno task test:unit
+deno task test:e2e
 
-# Run tests with coverage
-bun test --coverage
-
-# Run E2E tests (starts RabbitMQ automatically with Docker Compose)
-bun run test:e2e
-
-# Build
-bun run build
+# Publish to JSR
+deno publish --allow-slow-types
 ```
 
-## Docker Compose (for local development/testing)
+List all tasks: `deno task`
 
-A docker-compose.yml is included for running RabbitMQ locally:
+## Docker Compose
 
 ```bash
 # Start RabbitMQ
-docker-compose up -d
+docker compose up -d
 
 # Stop RabbitMQ
-docker-compose down
+docker compose down
 ```
 
-RabbitMQ management UI is available at http://localhost:15672 (guest/guest)
+RabbitMQ management UI: http://localhost:15672 (guest/guest)
 
 ## License
 

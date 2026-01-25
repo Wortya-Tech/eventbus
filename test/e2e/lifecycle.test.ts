@@ -6,10 +6,8 @@ import {
     createConsumer,
     createTestData,
     encodeTestData,
-    decodeTestData,
     createExchangeName,
     createQueueName,
-    waitForMessage,
     sleep,
     cleanupWithGrace,
 } from "./helpers.ts";

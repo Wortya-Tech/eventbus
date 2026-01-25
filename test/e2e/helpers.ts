@@ -1,11 +1,9 @@
-/// <reference lib="deno.ns" />
 import { Buffer } from "node:buffer";
 import { TextDecoder } from "node:util";
 import { setTimeout as nodeSetTimeout } from "node:timers/promises";
-import { connect as amqpConnect } from "npm:amqplib@0.10.9";
-import type { Channel, ChannelModel } from "npm:amqplib@0.10.9";
-import type { Message } from "npm:amqplib@0.10.9";
-import { EventBusService, ConnectionProvider } from "../../src/eventBus/index.ts";
+import { connect as amqpConnect } from "amqplib";
+import type { Channel, ChannelModel, Message } from "amqplib";
+import { EventBusService } from "../../src/eventBus/index.ts";
 
 export const rabbitMQUrl = "amqp://guest:guest@localhost:5672";
 
@@ -100,12 +98,8 @@ export async function consumeAndGetMessage(
     return null;
 }
 
-export async function cleanupService(service: EventBusService): Promise<void> {
-    try {
-        await service.close();
-    } catch (error) {
-        // Silently ignore cleanup errors
-    }
+export function cleanupService(service: EventBusService): Promise<void> {
+        return service.close();
 }
 
 export async function cleanupServices(services: EventBusService[]): Promise<void> {
@@ -114,24 +108,18 @@ export async function cleanupServices(services: EventBusService[]): Promise<void
     );
 }
 
-export async function cleanupExchange(
+export function cleanupExchange(
     channel: Channel,
     exchangeName: string
 ): Promise<void> {
-    try {
-        await channel.deleteExchange(exchangeName);
-    } catch {
-    }
+    return channel.deleteExchange(exchangeName);
 }
 
-export async function cleanupQueue(
+export function cleanupQueue(
     channel: Channel,
     queueName: string
 ): Promise<void> {
-    try {
-        await channel.deleteQueue(queueName);
-    } catch {
-    }
+    return channel.deleteQueue(queueName);
 }
 
 export async function cleanupExchangeAndQueues(
@@ -175,8 +163,6 @@ export async function cleanupWithGrace(
     if (channel) {
         try {
             await cleanupExchangeAndQueues(channel, exchangeName, queueNames);
-        } catch (error) {
-            // Cleanup é opcional, docker-compose down limpa tudo
         } finally {
             try {
                 await channel.close();
@@ -190,11 +176,7 @@ export async function cleanupWithGrace(
     await cleanupServices(services);
     
     // Fecha connection por último
-    try {
-        await connection.close();
-    } catch (error) {
-        // Connection já fechada
-    }
+    await connection.close();
 }
 
 export async function createProducer(
@@ -278,13 +260,14 @@ export function createRetryHandler(
     tracker: RetryTracker,
     failUntilAttempt: number
 ): (data: Buffer) => Promise<void> {
-    return async (data) => {
+    async function handler(_data: Buffer): Promise<void> {
         tracker.attempts++;
         if (tracker.attempts <= failUntilAttempt) {
             tracker.failures++;
             throw new Error(`Intentional failure at attempt ${tracker.attempts}`);
         }
-    };
+    }
+    return handler;
 }
 
 export async function killChannel(channel: Channel) {

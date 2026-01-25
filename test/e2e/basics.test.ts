@@ -44,7 +44,7 @@ Deno.test("should publish and consume using event bus service", async () => {
         let receivedData: typeof testData | null = null;
 
         consumer.subscribe("handler", async (data) => {
-            receivedData = decodeTestData(data);
+            await Promise.resolve(receivedData = decodeTestData(data));
         });
 
         await consumer.consume();
@@ -76,7 +76,7 @@ Deno.test("should execute multiple subscribers on same consumer", async () => {
             exchangeName,
             connection,
             producerName,
-            "amqp://guest:guest@localhost:5672",
+            "amqp://guest:guest:localhost:5672",
             false
         );
         services.push(producer);
@@ -86,7 +86,7 @@ Deno.test("should execute multiple subscribers on same consumer", async () => {
             queueName,
             connection,
             false,
-            "amqp://guest:guest@localhost:5672"
+            "amqp://guest:guest:localhost:5672"
         );
         services.push(consumer);
 
@@ -95,11 +95,11 @@ Deno.test("should execute multiple subscribers on same consumer", async () => {
         let handler2Called = false;
 
         consumer.subscribe("handler1", async () => {
-            handler1Called = true;
+            await Promise.resolve(handler1Called = true);
         });
 
         consumer.subscribe("handler2", async () => {
-            handler2Called = true;
+            await Promise.resolve(handler2Called = true);
         });
 
         await consumer.consume();
@@ -133,7 +133,7 @@ Deno.test("should fanout to multiple independent consumers", async () => {
             exchangeName,
             connection,
             producerName,
-            "amqp://guest:guest@localhost:5672",
+            "amqp://guest:guest:localhost:5672",
             false
         );
         services.push(producer);
@@ -143,7 +143,7 @@ Deno.test("should fanout to multiple independent consumers", async () => {
             queueName1,
             connection,
             false,
-            "amqp://guest:guest@localhost:5672"
+            "amqp://guest:guest:localhost:5672"
         );
         services.push(consumer1);
 
@@ -152,7 +152,7 @@ Deno.test("should fanout to multiple independent consumers", async () => {
             queueName2,
             connection,
             false,
-            "amqp://guest:guest@localhost:5672"
+            "amqp://guest:guest:localhost:5672"
         );
         services.push(consumer2);
 
@@ -161,11 +161,11 @@ Deno.test("should fanout to multiple independent consumers", async () => {
         let received2: typeof testData | null = null;
 
         consumer1.subscribe("handler1", async (data) => {
-            received1 = decodeTestData(data);
+            await Promise.resolve(received1 = decodeTestData(data));
         });
 
         consumer2.subscribe("handler2", async (data) => {
-            received2 = decodeTestData(data);
+            await Promise.resolve(received2 = decodeTestData(data));
         });
 
         await consumer1.consume();
