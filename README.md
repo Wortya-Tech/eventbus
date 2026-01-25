@@ -13,7 +13,8 @@ deno add jsr:@scope/fanaticjs
 Deno library using RabbitMQ for reliable messaging with key advantages over BullMQ:
 
 - **Deno Support**: Native npm: compatibility (BullMQ: Node.js only, no official Deno support)
-- **Consumer Isolation**: Each consumer owns dedicated queue, retry, and DLQ (BullMQ: weak shared queues)
+- **Consumer Isolation**: Each consumer owns dedicated queue, retry, and DLQ (BullMQ: weak shared
+  queues)
 - **Multi-Handlers**: `Promise.allSettled` executes all handlers (BullMQ: single handler)
 - **Reliability**: Durable ACK/NACK delivery vs BullMQ fire-and-forget
 - **Performance**: fanaticjs 50k msg/sec reliable vs BullMQ 100k+ msg/sec fast but lossy
@@ -22,9 +23,11 @@ Deno library using RabbitMQ for reliable messaging with key advantages over Bull
 
 ## Architecture
 
-Fanout exchange distributes messages to consumers each with own retry queue and DLQ for isolation. Each consumer receives messages independently with dedicated retry mechanism and DLQ.
+Fanout exchange distributes messages to consumers each with own retry queue and DLQ for isolation.
+Each consumer receives messages independently with dedicated retry mechanism and DLQ.
 
 **Message Flow:**
+
 - Publish → Distribute to all queues → Process → Ack | Retry | Send to DLQ
 
 ```mermaid
@@ -67,7 +70,7 @@ const producer = new EventBusService(
   "user-events",
   "unused",
   "my-service",
-  "1.0.0"
+  "1.0.0",
 );
 
 await producer.connect(amqpConnection, "amqp://localhost:5672", true);
@@ -75,7 +78,7 @@ await producer.connect(amqpConnection, "amqp://localhost:5672", true);
 await producer.publish({
   type: "user.created",
   data: Buffer.from(JSON.stringify({ id: "123", name: "Alice" })),
-  metadata: { contentType: "application/json" }
+  metadata: { contentType: "application/json" },
 });
 ```
 
@@ -88,7 +91,7 @@ const consumer = new EventBusService(
   "user-events",
   "email-service",
   "email-service",
-  "1.0.0"
+  "1.0.0",
 );
 
 await consumer.connect(amqpConnection, "amqp://localhost:5672", false);
@@ -113,7 +116,7 @@ const service = new EventBusService(
   "queue-name",
   "my-service",
   "1.0.0",
-  logger
+  logger,
 );
 ```
 
@@ -125,18 +128,18 @@ const service = new EventBusService(
   "queue-name",
   "my-service",
   "1.0.0",
-  undefined,  // logger (optional)
-  5,         // maxRetries (default: 3)
-  10000,     // retryDelay in ms (default: 5000)
-  10,        // maxConnectionRetries (default: 10)
-  2000       // initialReconnectDelay in ms (default: 1000)
+  undefined, // logger (optional)
+  5, // maxRetries (default: 3)
+  10000, // retryDelay in ms (default: 5000)
+  10, // maxConnectionRetries (default: 10)
+  2000, // initialReconnectDelay in ms (default: 1000)
 );
 ```
 
 ### Shared Connection via ConnectionProvider
 
 ```typescript
-import { EventBusService, ConnectionProvider } from "@scope/fanaticjs/eventBus";
+import { ConnectionProvider, EventBusService } from "@scope/fanaticjs/eventBus";
 
 const provider = new ConnectionProvider("amqp://guest:guest@localhost:5672");
 const sharedConnection = await provider.create();
@@ -150,36 +153,41 @@ await consumer.connect(sharedConnection, undefined, false);
 
 ## fanaticjs vs BullMQ
 
-| Aspect | fanaticjs (RabbitMQ) | BullMQ (Redis) |
-| --- | --- | --- |
-| Deno Support | ✅ Native library | ❌ Node.js only |
-| Execution | Isolated per consumer | Shared queue workers |
-| Guarantees | Durable, ACK/NACK | In-memory, fire-and-forget |
-| Multi-Handler | ✅ Promise.allSettled | ❌ Single handler |
-| Throughput | 50k-100k msg/sec | 100k+ msg/sec (30x Dragonfly) |
-| Reliability | High (durable storage) | Medium (memory-dependent) |
-| Close Tracking | ✅ WeakMap | ❌ No built-in |
-| Retry | Per-consumer + DLQ | Shared queue |
-| Message Patterns | Fanout, Direct, Topic | Queue-based only |
-| Clustering | Built-in | External tools |
-| Management UI | Included (http://localhost:15672) | Third-party plugins only |
+| Aspect           | fanaticjs (RabbitMQ)              | BullMQ (Redis)                |
+| ---------------- | --------------------------------- | ----------------------------- |
+| Deno Support     | ✅ Native library                 | ❌ Node.js only               |
+| Execution        | Isolated per consumer             | Shared queue workers          |
+| Guarantees       | Durable, ACK/NACK                 | In-memory, fire-and-forget    |
+| Multi-Handler    | ✅ Promise.allSettled             | ❌ Single handler             |
+| Throughput       | 50k-100k msg/sec                  | 100k+ msg/sec (30x Dragonfly) |
+| Reliability      | High (durable storage)            | Medium (memory-dependent)     |
+| Close Tracking   | ✅ WeakMap                        | ❌ No built-in                |
+| Retry            | Per-consumer + DLQ                | Shared queue                  |
+| Message Patterns | Fanout, Direct, Topic             | Queue-based only              |
+| Clustering       | Built-in                          | External tools                |
+| Management UI    | Included (http://localhost:15672) | Third-party plugins only      |
 
-**When to Choose:** fanaticjs for guaranteed delivery (payments, emails, compliance) and consumer isolation. BullMQ for speed where occasional loss acceptable (analytics, background tasks).
+**When to Choose:** fanaticjs for guaranteed delivery (payments, emails, compliance) and consumer
+isolation. BullMQ for speed where occasional loss acceptable (analytics, background tasks).
 
 ## Features
 
 **Core Architecture:**
+
 - Isolated execution (failures never cascade)
 - WeakMap close tracking (avoids false reconnections)
 - Multi-handler processing via Promise.allSettled
 - Per-consumer retry + DLQ for complete error isolation
 
 **Message Handling:**
+
 - Retry: Configurable attempts (default 3), delay (default 5s), tracking in `x-retry-count` header
 - DLQ: Failed messages stored for post-failure analysis
-- Routing: Headers `x-retry-count`, `x-first-death-exchange`, `x-first-death-queue` for lifecycle tracking
+- Routing: Headers `x-retry-count`, `x-first-death-exchange`, `x-first-death-queue` for lifecycle
+  tracking
 
 **Connection Management:**
+
 - Owned and shared connections supported
 - Exponential backoff reconnection
 - Graceful close tracking

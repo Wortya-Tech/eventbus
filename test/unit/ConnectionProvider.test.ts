@@ -6,7 +6,7 @@ Deno.test("should use default logger if not provided", () => {
     "test-exchange",
     "test-queue",
     "test-source",
-    "1.0.0"
+    "1.0.0",
   );
   assertEquals(typeof service["logger"], "object");
 });
