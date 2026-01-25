@@ -1,4 +1,3 @@
-// TODO: transformar isso de alguma forma em library
 import type { Channel, ChannelModel, Message, MessageProperties } from "amqplib";
 import type { Logger } from "pino";
 import { connect as rabbitmqConnect } from "amqplib";
