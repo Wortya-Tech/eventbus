@@ -5,3 +5,4 @@ bun.lockb
 package.lock
 bunup.config.ts
 tsconfig.json
+coverage/
