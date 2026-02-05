@@ -1,6 +1,6 @@
 {
   "name": "fanaticjs",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "license": "GPLv3",
   "exports": "./src/eventBus/index.ts",
   "description": "RabbitMQ library for Deno implementing independent queues and events using fanout strategy.",
