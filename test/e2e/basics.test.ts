@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import type { EventBusService } from "../../src/eventBus/index.ts";
+import type { EventBusService } from "../../src/main.ts";
 import {
   cleanupWithGrace,
   connectToRabbitMQ,

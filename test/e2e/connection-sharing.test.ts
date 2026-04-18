@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { TextDecoder } from "node:util";
-import { ConnectionProvider, EventBusService } from "../../src/eventBus/index.ts";
+import { ConnectionProvider, EventBusService } from "../../src/main.ts";
 import {
   cleanupWithGrace,
   connectToRabbitMQ,

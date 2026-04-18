@@ -3,7 +3,7 @@ import { TextDecoder } from "node:util";
 import { setTimeout as nodeSetTimeout } from "node:timers/promises";
 import { connect as amqpConnect } from "amqplib";
 import type { Channel, ChannelModel } from "amqplib";
-import { EventBusService } from "../../src/eventBus/index.ts";
+import { EventBusService } from "../../src/main.ts";
 
 export const rabbitMQUrl = "amqp://guest:guest@localhost:5672";
 

@@ -616,11 +616,6 @@ export class EventBusService {
         // Get all handlers for this message type
         const handlers = this.subscribers.values();
 
-        // Execute all handlers
-        this.logger.info(
-          msg.properties,
-          `Received message of type ${msg.properties.contentType}`,
-        );
         const results = await Promise.allSettled(
           Array.from(handlers).map((handler) => handler(msg.content, msg.properties)),
         );

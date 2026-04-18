@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { EventBusService } from "../../src/eventBus/index.ts";
+import { EventBusService } from "../../src/main.ts";
 
 Deno.test("should use default logger if not provided", () => {
   const service = new EventBusService(

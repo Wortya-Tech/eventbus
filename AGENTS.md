@@ -9,9 +9,8 @@ dedicated queue with retry and DLQ (Dead Letter Queue) support.
 
 ```
 fanaticjs/
-├── eventBus/
-│   ├── index.ts         # Core EventBusService implementation
-│   └── README.md        # Architecture documentation
+├── src/
+│   └── main.ts          # Core EventBusService implementation
 └── AGENTS.md            # This file
 ```
 

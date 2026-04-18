@@ -6,7 +6,7 @@
     "npm:amqplib@0.10.9": "0.10.9",
     "npm:amqplib@~0.10.9": "0.10.9",
     "npm:pino@9.6.0": "9.6.0",
-    "npm:pino@^10.3.0": "10.3.0"
+    "npm:pino@^10.3.1": "10.3.1"
   },
   "jsr": {
     "@std/assert@1.0.2": {
@@ -57,8 +57,8 @@
     "pino-std-serializers@7.1.0": {
       "integrity": "sha512-BndPH67/JxGExRgiX1dX0w1FvZck5Wa4aal9198SrRhZjH3GxKQUKIBnYJTdj2HDN3UQAS06HlfcSbQj2OHmaw=="
     },
-    "pino@10.3.0": {
-      "integrity": "sha512-0GNPNzHXBKw6U/InGe79A3Crzyk9bcSyObF9/Gfo9DLEf5qj5RF50RSjsu0W1rZ6ZqRGdzDFCRBQvi9/rSGPtA==",
+    "pino@10.3.1": {
+      "integrity": "sha512-r34yH/GlQpKZbU1BvFFqOjhISRo1MNx1tWYsYvmj6KIRHSPMT2+yHOEb1SG6NMvRoHRF0a07kCOox/9yakl1vg==",
       "dependencies": [
         "@pinojs/redact",
         "atomic-sleep",
@@ -145,7 +145,7 @@
     "dependencies": [
       "jsr:@std/assert@1.0.2",
       "npm:amqplib@~0.10.9",
-      "npm:pino@^10.3.0"
+      "npm:pino@^10.3.1"
     ]
   }
 }

@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { TextDecoder } from "node:util";
-import { EventBusService } from "../../src/eventBus/index.ts";
+import { EventBusService } from "../../src/main.ts";
 import type { TestData } from "./helpers.ts";
 import {
   cleanupWithGrace,
