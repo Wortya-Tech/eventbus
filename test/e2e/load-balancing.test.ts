@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertGreater } from "@std/assert";
 import { EventBusService } from "../../src/main.ts";
 import {
   cleanupWithGrace,
@@ -39,12 +39,14 @@ Deno.test("Load Balancing: shared queue prevents duplicate message processing", 
     services.push(serviceB);
 
     // Set up subscribers to track which service gets which message
-    serviceA.subscribe("collector", async (_data, props) => {
+    serviceA.subscribe("collector", (_data, props) => {
       messageIdsA.push(props.messageId!);
+      return Promise.resolve();
     });
 
-    serviceB.subscribe("collector", async (_data, props) => {
+    serviceB.subscribe("collector", (_data, props) => {
       messageIdsB.push(props.messageId!);
+      return Promise.resolve();
     });
 
     // Connect and start consuming
@@ -87,7 +89,9 @@ Deno.test("Load Balancing: shared queue prevents duplicate message processing", 
     // Assertion 3: Load balancing verification (messages distributed between services)
     // This is optional in the sense that it tests *distribution*, not just no-dup,
     // but it confirms the work queue pattern is active
-    const hasDistribution = messageIdsA.length > 0 && messageIdsB.length > 0;
+    messageIdsA.length > 0 && messageIdsB.length > 0;
+    assertGreater(messageIdsA.length, 0);
+    assertGreater(messageIdsB.length, 0);
   } finally {
     await cleanupWithGrace(connection, exchangeName, [sharedQueueName], services);
   }

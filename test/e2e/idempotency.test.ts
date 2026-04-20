@@ -24,8 +24,9 @@ Deno.test("Idempotency - subscribe() same key should overwrite not duplicate", a
 
   try {
     let callCount = 0;
-    const handler = async () => {
+    const handler = () => {
       callCount++;
+      return Promise.resolve();
     };
 
     // Subscribe twice with same key
@@ -66,8 +67,9 @@ Deno.test("At-Least-Once Delivery - identical payloads produce distinct events",
   try {
     const receivedIds: string[] = [];
 
-    service.subscribe("collector", async (_data, props) => {
+    service.subscribe("collector", (_data, props) => {
       receivedIds.push(props.messageId as string);
+      return Promise.resolve();
     });
 
     await service.consume();

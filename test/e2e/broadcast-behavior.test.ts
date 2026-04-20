@@ -38,12 +38,14 @@ Deno.test("Fanout Exchange: one published event is consumed by multiple queues",
     const bReceivedMessages: number[] = [];
 
     // Set up subscribers on both services
-    serviceA.subscribe("collector", async () => {
+    serviceA.subscribe("collector", () => {
       aReceivedMessages.push(1);
+      return Promise.resolve();
     });
 
-    serviceB.subscribe("collector", async () => {
+    serviceB.subscribe("collector", () => {
       bReceivedMessages.push(1);
+      return Promise.resolve();
     });
 
     // Connect and start consuming
