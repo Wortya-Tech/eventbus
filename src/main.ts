@@ -1,3 +1,4 @@
+// TODO: transformar isso de alguma forma em library
 import type { Channel, ChannelModel, Message, MessageProperties } from "amqplib";
 import type { Logger } from "pino";
 export type { Channel, ChannelModel, Message, MessageProperties };
@@ -78,14 +79,14 @@ export class ConnectionProvider {
    * const connection = await provider.create();
    * ```
    */
-  async create(): Promise<ChannelModel> {
+  create = async (): Promise<ChannelModel> => {
     if (this.connection && this.isConnectionAlive(this.connection)) {
       return this.connection;
     }
     // If connection is dead, create a new one
     this.logger.info("Creating new RabbitMQ connection from provider");
     const url = new URL(this.url);
-    this.logger.debug({ url: url.host }, "Connetction domain");
+    this.logger.debug({ url: url.host }, "Connection domain");
     const connection = await rabbitmqConnect(this.url, {
       timeout: 30000,
     });
@@ -257,8 +258,8 @@ export class EventBusService {
       durable: true,
     });
 
-    // Setup DLX exchange
-    await this.channel.assertExchange(this.deadLetterExchange, "fanout", {
+    // Setup DLX exchange (direct to avoid redistributing to all queues)
+    await this.channel.assertExchange(this.deadLetterExchange, "direct", {
       durable: true,
     });
 
@@ -531,7 +532,7 @@ export class EventBusService {
       this.logger.info("Reconnecting to RabbitMQ...");
       await this.connect(
         newConnection,
-        undefined,
+        this.rabbitmqUrl,
         this.ownsConnection,
         this.connectionProvider,
       );
@@ -552,31 +553,31 @@ export class EventBusService {
   }
 
   private async createQueueInternal(channel: Channel): Promise<void> {
-    // Create DLQ
+    // Create DLQ (bind with queueName as routing key to prevent redistribution)
     const dlqName = `${this.queueName}.dlq`;
     await channel.assertQueue(dlqName, {
       durable: true,
     });
-    await channel.bindQueue(dlqName, this.deadLetterExchange, "");
+    await channel.bindQueue(dlqName, this.deadLetterExchange, this.queueName);
 
-    // Create retry queue
+    // Create retry queue (route back to main exchange and queue on retry)
     const retryQueueName = `${this.queueName}.retry`;
     await channel.assertQueue(retryQueueName, {
       durable: true,
       arguments: {
-        "x-dead-letter-exchange": this.exchangeName, // Route back to main exchange
-        "x-dead-letter-routing-key": "",
-        "x-message-ttl": this.RETRY_DELAY, // Configurable delay before retry
+        "x-dead-letter-exchange": this.exchangeName,
+        "x-dead-letter-routing-key": this.queueName,
+        "x-message-ttl": this.RETRY_DELAY,
       },
     });
     await channel.bindQueue(retryQueueName, this.retryExchange, "");
 
-    // Create main queue with DLQ configuration
+    // Create main queue with DLQ configuration (use queueName as routing key)
     await channel.assertQueue(this.queueName, {
       durable: true,
       arguments: {
         "x-dead-letter-exchange": this.deadLetterExchange,
-        "x-dead-letter-routing-key": "",
+        "x-dead-letter-routing-key": this.queueName,
       },
     });
 
@@ -616,6 +617,11 @@ export class EventBusService {
         // Get all handlers for this message type
         const handlers = this.subscribers.values();
 
+        // Execute all handlers
+        this.logger.info(
+          msg.properties,
+          `Received message of type ${msg.properties.contentType}`,
+        );
         const results = await Promise.allSettled(
           Array.from(handlers).map((handler) => handler(msg.content, msg.properties)),
         );
@@ -706,7 +712,7 @@ export class EventBusService {
         { error, eventType: event.type },
         "Failed to publish event",
       );
-      throw error;
+      return false;
     }
   }
 
