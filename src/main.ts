@@ -258,8 +258,8 @@ export class EventBusService {
       durable: true,
     });
 
-    // Setup DLX exchange (direct to avoid redistributing to all queues)
-    await this.channel.assertExchange(this.deadLetterExchange, "direct", {
+    // Setup DLX exchange
+    await this.channel.assertExchange(this.deadLetterExchange, "fanout", {
       durable: true,
     });
 
@@ -553,31 +553,31 @@ export class EventBusService {
   }
 
   private async createQueueInternal(channel: Channel): Promise<void> {
-    // Create DLQ (bind with queueName as routing key to prevent redistribution)
+    // Create DLQ
     const dlqName = `${this.queueName}.dlq`;
     await channel.assertQueue(dlqName, {
       durable: true,
     });
-    await channel.bindQueue(dlqName, this.deadLetterExchange, this.queueName);
+    await channel.bindQueue(dlqName, this.deadLetterExchange, "");
 
-    // Create retry queue (route back to main exchange and queue on retry)
+    // Create retry queue
     const retryQueueName = `${this.queueName}.retry`;
     await channel.assertQueue(retryQueueName, {
       durable: true,
       arguments: {
-        "x-dead-letter-exchange": this.exchangeName,
-        "x-dead-letter-routing-key": this.queueName,
-        "x-message-ttl": this.RETRY_DELAY,
+        "x-dead-letter-exchange": this.exchangeName, // Route back to main exchange
+        "x-dead-letter-routing-key": "",
+        "x-message-ttl": this.RETRY_DELAY, // Configurable delay before retry
       },
     });
     await channel.bindQueue(retryQueueName, this.retryExchange, "");
 
-    // Create main queue with DLQ configuration (use queueName as routing key)
+    // Create main queue with DLQ configuration
     await channel.assertQueue(this.queueName, {
       durable: true,
       arguments: {
         "x-dead-letter-exchange": this.deadLetterExchange,
-        "x-dead-letter-routing-key": this.queueName,
+        "x-dead-letter-routing-key": "",
       },
     });
 
