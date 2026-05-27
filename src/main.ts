@@ -1,8 +1,6 @@
 // TODO: transformar isso de alguma forma em library
 import type { Channel, ChannelModel, Message, MessageProperties } from "amqplib";
 import type { Logger } from "pino";
-export type { Channel, ChannelModel, Message, MessageProperties };
-export type { Logger };
 import { connect as rabbitmqConnect } from "amqplib";
 import { randomUUID } from "node:crypto";
 import { pino } from "pino";
@@ -55,7 +53,7 @@ export class ConnectionProvider {
     public readonly url: string,
     logger?: Logger,
   ) {
-    this.logger = logger || pino({ level: "silent" });
+    this.logger = logger ?? pino({ level: "silent" });
   }
 
   private isConnectionAlive = (conn: ChannelModel): boolean => {
@@ -92,7 +90,7 @@ export class ConnectionProvider {
     });
     this.connection = connection;
     return connection;
-  };
+  }
 }
 
 /**
@@ -162,10 +160,10 @@ export class EventBusService {
     this.RETRY_DELAY = retryDelay;
     this.MAX_CONNECTION_RETRIES = maxConnectionRetries;
     this.INITIAL_RECONNECT_DELAY = initialReconnectDelay;
-    this.deadLetterExchange = `${this.exchangeName}.dlx`;
-    this.retryExchange = `${this.exchangeName}.retry`;
+    this.deadLetterExchange = `${this.queueName}.dlx`;
+    this.retryExchange = `${this.queueName}.retry`;
     this.subscribers = new Map();
-    this.logger = logger || pino({ level: "silent" });
+    this.logger = logger ?? pino({ level: "silent" });
     this.connectionRetryCount = 0;
     this.isReconnecting = false;
     this.ownsConnection = false;
@@ -382,7 +380,7 @@ export class EventBusService {
     await this.channel.assertExchange(this.exchangeName, "fanout", {
       durable: true,
     });
-    await this.channel.assertExchange(this.deadLetterExchange, "fanout", {
+    await this.channel.assertExchange(this.deadLetterExchange, "direct", {
       durable: true,
     });
     await this.channel.assertExchange(this.retryExchange, "fanout", {
@@ -466,7 +464,7 @@ export class EventBusService {
       });
       await this.channel.assertExchange(
         this.deadLetterExchange,
-        "fanout",
+        "direct",
         { durable: true },
       );
       await this.channel.assertExchange(this.retryExchange, "fanout", {
