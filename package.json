@@ -1,0 +1,44 @@
+{
+  "name": "fanaticjs",
+  "version": "0.1.0",
+  "description": "RabbitMQ library implementing independent queues and events using fanout strategy.",
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/main.ts",
+      "default": "./src/main.ts"
+    }
+  },
+  "main": "./src/main.ts",
+  "files": [
+    "src",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "check": "tsc --noEmit",
+    "lint": "eslint src/ test/",
+    "test": "node --import tsx --test --test-reporter spec --test-concurrency 1 --experimental-test-coverage --env-file=.env test/unit/*.test.ts test/integration/*.test.ts test/e2e/*.test.ts",
+    "test:unit": "node --import tsx --test --test-reporter spec --test-concurrency 1 --experimental-test-coverage test/unit/*.test.ts",
+    "test:integration": "node --import tsx --test --test-reporter spec --test-concurrency 1 --experimental-test-coverage --env-file=.env test/integration/*.test.ts",
+    "test:e2e": "node --import tsx --test --test-reporter spec --test-concurrency 1 --experimental-test-coverage --env-file=.env test/e2e/*.test.ts",
+    "coverage": "node --import tsx --test --test-reporter spec --test-reporter lcov --test-reporter-destination stdout --test-reporter-destination coverage/lcov.info --test-concurrency 1 --experimental-test-coverage --env-file=.env test/unit/*.test.ts test/integration/*.test.ts test/e2e/*.test.ts",
+    "coverage:lcov": "node --import tsx --test --test-reporter lcov --test-reporter-destination coverage/lcov.info --test-concurrency 1 --experimental-test-coverage --env-file=.env test/unit/*.test.ts test/integration/*.test.ts test/e2e/*.test.ts",
+    "rabbitmq:start": "docker compose up -d",
+    "rabbitmq:stop": "docker compose down"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "eslint": "^9.15.0",
+    "globals": "^16.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.18.0"
+  },
+  "dependencies": {
+    "amqplib": "^1.0.3",
+    "pino": "^10.3.1"
+  }
+}
