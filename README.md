@@ -190,4 +190,4 @@ RabbitMQ management UI: http://localhost:15672 (guest/guest)
 
 ## License
 
-MIT
+LGPL-3.0-or-later
