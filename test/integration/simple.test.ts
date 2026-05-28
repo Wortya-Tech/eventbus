@@ -1,19 +1,18 @@
-import { describe, it, before, after } from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel, Message } from "amqplib";
 
 const URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
 
-describe("simple raw publish/consume", () => {
+test("simple raw publish/consume", async (t) => {
     let connection: ChannelModel;
 
-    before(async () => { connection = await amqpConnect(URL); });
-    after(async () => { await connection.close(); });
+    t.before(async () => { connection = await amqpConnect(URL); });
+    t.after(async () => { await connection.close(); });
 
-    it("should publish and consume message", async (t) => {
+    await t.test("should publish and consume message", async () => {
         const channel = await connection.createChannel();
-        t.after(async () => { await channel.close(); });
 
         const ex = "test.simple.publish";
         const q = "test.simple.queue";

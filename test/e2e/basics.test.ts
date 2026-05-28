@@ -1,4 +1,4 @@
-import { describe, it, before, after } from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel } from "amqplib";
@@ -6,12 +6,12 @@ import { EventBusService } from "../../src/main.js";
 
 const URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
 
-describe("basics - publish and consume", () => {
+test("basics - publish and consume", async (t) => {
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
 
-    before(async () => {
+    t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.basics.pub", "test.basics.pub.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
@@ -19,13 +19,13 @@ describe("basics - publish and consume", () => {
         await consumer.connect(connection, URL, false);
     });
 
-    after(async () => {
+    t.after(async () => {
         await consumer.close();
         await producer.close();
         await connection.close();
     });
 
-    it("should publish and consume using event bus service", async () => {
+    await t.test("should publish and consume using event bus service", async () => {
         const data = { id: "basics-1", value: 1, timestamp: Date.now() };
         let received: typeof data | null = null;
         consumer.subscribe("h", async (buf) => { received = JSON.parse(new TextDecoder().decode(buf)); });
@@ -38,12 +38,12 @@ describe("basics - publish and consume", () => {
     });
 });
 
-describe("basics - multiple subscribers", () => {
+test("basics - multiple subscribers", async (t) => {
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
 
-    before(async () => {
+    t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.basics.multi", "test.basics.multi.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
@@ -51,13 +51,13 @@ describe("basics - multiple subscribers", () => {
         await consumer.connect(connection, URL, false);
     });
 
-    after(async () => {
+    t.after(async () => {
         await consumer.close();
         await producer.close();
         await connection.close();
     });
 
-    it("should execute multiple subscribers on same consumer", async () => {
+    await t.test("should execute multiple subscribers on same consumer", async () => {
         let a = false, b = false;
         consumer.subscribe("h1", async () => { a = true; }); consumer.subscribe("h2", async () => { b = true; });
         await consumer.consume(); await new Promise(r => setTimeout(r, 100));
@@ -67,13 +67,13 @@ describe("basics - multiple subscribers", () => {
     });
 });
 
-describe("basics - fanout", () => {
+test("basics - fanout", async (t) => {
     let connection: ChannelModel;
     let producer: EventBusService;
     let c1: EventBusService;
     let c2: EventBusService;
 
-    before(async () => {
+    t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.basics.fanout", "test.basics.fanout.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
@@ -83,14 +83,14 @@ describe("basics - fanout", () => {
         await c2.connect(connection, URL, false);
     });
 
-    after(async () => {
+    t.after(async () => {
         await c1.close();
         await c2.close();
         await producer.close();
         await connection.close();
     });
 
-    it("should fanout to multiple independent consumers", async () => {
+    await t.test("should fanout to multiple independent consumers", async () => {
         const data = { id: "fanout", value: 1, timestamp: Date.now() };
         let r1: typeof data | null = null, r2: typeof data | null = null;
         c1.subscribe("h1", async (buf) => { r1 = JSON.parse(new TextDecoder().decode(buf)); });
@@ -104,12 +104,12 @@ describe("basics - fanout", () => {
     });
 });
 
-describe("basics - subscribe overwrite", () => {
+test("basics - subscribe overwrite", async (t) => {
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
 
-    before(async () => {
+    t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.basics.overwrite", "test.basics.overwrite.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
@@ -117,13 +117,13 @@ describe("basics - subscribe overwrite", () => {
         await consumer.connect(connection, URL, false);
     });
 
-    after(async () => {
+    t.after(async () => {
         await consumer.close();
         await producer.close();
         await connection.close();
     });
 
-    it("subscribe() should not overwrite existing handler", async () => {
+    await t.test("subscribe() should not overwrite existing handler", async () => {
         let h1c = false, h2c = false;
         consumer.subscribe("k", async () => { h1c = true; });
         consumer.subscribe("k", async () => { h2c = true; });

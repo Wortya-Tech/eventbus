@@ -1,4 +1,4 @@
-import { describe, it, before, after } from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel } from "amqplib";
@@ -6,12 +6,12 @@ import { EventBusService } from "../../src/main.js";
 
 const URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
 
-describe("advanced - concurrent publishing", () => {
+test("advanced - concurrent publishing", async (t) => {
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
 
-    before(async () => {
+    t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.advanced.concurrent", "test.advanced.concurrent.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
@@ -19,13 +19,13 @@ describe("advanced - concurrent publishing", () => {
         await consumer.connect(connection, URL, false);
     });
 
-    after(async () => {
+    t.after(async () => {
         await consumer.close();
         await producer.close();
         await connection.close();
     });
 
-    it("should handle concurrent publishing", async () => {
+    await t.test("should handle concurrent publishing", async () => {
         const msgs: string[] = [];
         consumer.subscribe("h", async (buf) => { msgs.push(JSON.parse(new TextDecoder().decode(buf)).id); });
         await consumer.consume(); await new Promise(r => setTimeout(r, 100));
@@ -40,12 +40,12 @@ describe("advanced - concurrent publishing", () => {
     });
 });
 
-describe("advanced - message order", () => {
+test("advanced - message order", async (t) => {
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
 
-    before(async () => {
+    t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.advanced.order", "test.advanced.order.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
@@ -53,13 +53,13 @@ describe("advanced - message order", () => {
         await consumer.connect(connection, URL, false);
     });
 
-    after(async () => {
+    t.after(async () => {
         await consumer.close();
         await producer.close();
         await connection.close();
     });
 
-    it("should maintain message order during retries", async () => {
+    await t.test("should maintain message order during retries", async () => {
         const order: string[] = [];
         let fail = 0;
         consumer.subscribe("h", async (buf) => { const { id } = JSON.parse(new TextDecoder().decode(buf)); order.push(id); if (id === "order-1" && fail === 0) { fail++; throw new Error("fail"); } });
@@ -74,12 +74,12 @@ describe("advanced - message order", () => {
     });
 });
 
-describe("advanced - pre publish", () => {
+test("advanced - pre publish", async (t) => {
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
 
-    before(async () => {
+    t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.advanced.prepub", "test.advanced.prepub.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
@@ -87,13 +87,13 @@ describe("advanced - pre publish", () => {
         await consumer.connect(connection, URL, false);
     });
 
-    after(async () => {
+    t.after(async () => {
         await consumer.close();
         await producer.close();
         await connection.close();
     });
 
-    it("should handle message publish before consumer is ready", async () => {
+    await t.test("should handle message publish before consumer is ready", async () => {
         let received: { id: string } | null = null;
         consumer.subscribe("h", (buf) => { received = JSON.parse(new TextDecoder().decode(buf)); return Promise.resolve(); });
         await consumer.consume(); await new Promise(r => setTimeout(r, 100));
@@ -104,12 +104,12 @@ describe("advanced - pre publish", () => {
     });
 });
 
-describe("advanced - metadata", () => {
+test("advanced - metadata", async (t) => {
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
 
-    before(async () => {
+    t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.advanced.metadata", "test.advanced.metadata.p", "my-service", "2.0.0");
         await producer.connect(connection, URL, false);
@@ -117,13 +117,13 @@ describe("advanced - metadata", () => {
         await consumer.connect(connection, URL, false);
     });
 
-    after(async () => {
+    t.after(async () => {
         await consumer.close();
         await producer.close();
         await connection.close();
     });
 
-    it("should include all message metadata", async () => {
+    await t.test("should include all message metadata", async () => {
         let props: Record<string, unknown> | null = null;
         consumer.subscribe("h", (_d, p) => { props = p as unknown as Record<string, unknown>; return Promise.resolve(); });
         await consumer.consume(); await new Promise(r => setTimeout(r, 100));

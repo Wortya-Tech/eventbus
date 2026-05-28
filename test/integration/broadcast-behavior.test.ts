@@ -1,4 +1,4 @@
-import { describe, it, before, after } from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel } from "amqplib";
@@ -6,12 +6,12 @@ import { EventBusService } from "../../src/main.js";
 
 const URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
 
-describe("broadcast-behavior", () => {
+test("broadcast-behavior", async (t) => {
     let connection: ChannelModel;
     let svcA: EventBusService;
     let svcB: EventBusService;
 
-    before(async () => {
+    t.before(async () => {
         connection = await amqpConnect(URL);
         svcA = new EventBusService("test.broadcast", "test.broadcast.a", "a", "1.0.0");
         svcB = new EventBusService("test.broadcast", "test.broadcast.b", "b", "1.0.0");
@@ -19,13 +19,13 @@ describe("broadcast-behavior", () => {
         await svcB.connect(connection); await svcB.consume();
     });
 
-    after(async () => {
+    t.after(async () => {
         await svcA.close();
         await svcB.close();
         await connection.close();
     });
 
-    it("one published event is consumed by multiple queues", async () => {
+    await t.test("one published event is consumed by multiple queues", async () => {
         const ma: number[] = []; const mb: number[] = [];
         svcA.subscribe("c", () => { ma.push(1); return Promise.resolve(); });
         svcB.subscribe("c", () => { mb.push(1); return Promise.resolve(); });

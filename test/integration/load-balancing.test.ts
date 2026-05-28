@@ -1,4 +1,4 @@
-import { describe, it, before, after } from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel } from "amqplib";
@@ -6,12 +6,12 @@ import { EventBusService } from "../../src/main.js";
 
 const URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
 
-describe("load-balancing", () => {
+test("load-balancing", async (t) => {
     let connection: ChannelModel;
     let svcA: EventBusService;
     let svcB: EventBusService;
 
-    before(async () => {
+    t.before(async () => {
         connection = await amqpConnect(URL);
         svcA = new EventBusService("test.load.balance", "test.load.balance.q", "a", "1.0.0");
         svcB = new EventBusService("test.load.balance", "test.load.balance.q", "b", "1.0.0");
@@ -19,13 +19,13 @@ describe("load-balancing", () => {
         await svcB.connect(connection); await svcB.consume();
     });
 
-    after(async () => {
+    t.after(async () => {
         await svcA.close();
         await svcB.close();
         await connection.close();
     });
 
-    it("shared queue prevents duplicate message processing", async () => {
+    await t.test("shared queue prevents duplicate message processing", async () => {
         const idsA: string[] = []; const idsB: string[] = [];
         svcA.subscribe("c", (_d, props) => { if (props.messageId) idsA.push(props.messageId); return Promise.resolve(); });
         svcB.subscribe("c", (_d, props) => { if (props.messageId) idsB.push(props.messageId); return Promise.resolve(); });
