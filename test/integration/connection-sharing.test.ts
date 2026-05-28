@@ -108,4 +108,69 @@ describe("connection-sharing - provider reconnect", () => {
     });
 });
 
+describe("connection-sharing - provider dead connection", () => {
+    let provider: ConnectionProvider;
+
+    before(() => {
+        provider = new ConnectionProvider("amqp://guest:guest@localhost:5672");
+        // Inject a "dead" connection so create() makes a new one
+        (provider as unknown as Record<string, ChannelModel>)["connection"] = {
+            connection: { stream: { destroyed: true } },
+        } as unknown as ChannelModel;
+    });
+
+    after(async () => {
+        // The connection created by create() is stored on the provider
+        const conn = (provider as unknown as Record<string, ChannelModel>)["connection"];
+        if (conn && typeof (conn as unknown as { close?: () => Promise<void> }).close === "function") {
+            await conn.close();
+        }
+    });
+
+    it("create() should make new connection when existing is dead", async () => {
+        const conn = await provider.create();
+        assert.ok(conn !== null);
+        const alive = (provider as unknown as Record<string, (c: ChannelModel) => boolean>)["isConnectionAlive"](conn);
+        assert.equal(alive, true);
+    });
+});
+
+describe("connection-sharing - ensureChannel with provider", () => {
+    let connection: ChannelModel;
+    let svc: EventBusService;
+    let provider: ConnectionProvider;
+
+    before(async () => {
+        connection = await amqpConnect(URL);
+        provider = new ConnectionProvider("amqp://guest:guest@localhost:5672");
+        svc = new EventBusService("test.ensure.channel.pvd", "test.ensure.channel.pvd.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await svc.connect(connection, undefined, false, () => provider.create());
+    });
+
+    after(async () => {
+        await svc.close();
+        await connection.close();
+        const pvdConn = (provider as unknown as Record<string, ChannelModel>)["connection"];
+        if (pvdConn) await pvdConn.close();
+    });
+
+    it("should recreate channel via connectionProvider when channel dies", async () => {
+        let received = false;
+        svc.subscribe("h", async () => { received = true; });
+        await svc.consume(); await new Promise(r => setTimeout(r, 100));
+
+        // Kill the service's channel — ensureChannel will detect and use connectionProvider
+        const svcChan = (svc as unknown as { channel?: { close(): Promise<void> } }).channel;
+        if (svcChan) await svcChan.close();
+        await new Promise(r => setTimeout(r, 300));
+
+        const succeeded = await svc.publish({
+            type: "test.event",
+            data: Buffer.from(JSON.stringify({ x: 1 })),
+            metadata: { contentType: "application/json" },
+        });
+        assert.equal(succeeded, true);
+    });
+});
+
 

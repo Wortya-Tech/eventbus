@@ -6,18 +6,18 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./src/main.ts",
-      "default": "./src/main.ts"
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.js"
     }
   },
-  "main": "./src/main.ts",
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
   "files": [
-    "src",
     "dist",
-    "README.md",
     "LICENSE"
   ],
   "scripts": {
+    "build": "tsc -p tsconfig.prod.json",
     "check": "tsc --noEmit",
     "lint": "eslint src/ test/",
     "test": "node --import tsx --test --test-reporter spec --test-concurrency 1 --experimental-test-coverage --env-file=.env test/unit/*.test.ts test/integration/*.test.ts test/e2e/*.test.ts",
@@ -31,10 +31,10 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "eslint": "^9.15.0",
+    "eslint": "^10.4.0",
     "globals": "^16.0.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.7.0",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.18.0"
   },
   "dependencies": {

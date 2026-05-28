@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { ConnectionProvider } from "../../src/main.js";
+import type { ChannelModel } from "amqplib";
 
 test("ConnectionProvider", async (t) => {
     await t.test("should store the URL", () => {
@@ -30,6 +31,19 @@ test("ConnectionProvider", async (t) => {
         assert.strictEqual(
             (provider as unknown as Record<string, unknown>)["logger"],
             customLogger,
+        );
+    });
+
+    await t.test("create() should return existing connection if alive", async () => {
+        const provider = new ConnectionProvider("amqp://localhost:5672");
+        const mockConn = { connection: { stream: { destroyed: false } } };
+        (provider as unknown as Record<string, ChannelModel>)["connection"] =
+            mockConn as unknown as ChannelModel;
+
+        const result = await provider.create();
+        assert.strictEqual(
+            result as unknown as typeof mockConn,
+            mockConn,
         );
     });
 });

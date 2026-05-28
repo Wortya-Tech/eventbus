@@ -58,7 +58,7 @@ export class ConnectionProvider {
     this.logger = logger ?? pino({ level: "silent" });
   }
 
-  private isConnectionAlive = (conn: ChannelModel): boolean => {
+  private isConnectionAlive(conn: ChannelModel): boolean {
     try {
       if (!conn) return false;
       const con = conn as { connection?: { stream?: { destroyed?: boolean } } };
@@ -79,7 +79,7 @@ export class ConnectionProvider {
    * const connection = await provider.create();
    * ```
    */
-  create = async (): Promise<ChannelModel> => {
+  async create(): Promise<ChannelModel> {
     if (this.connection && this.isConnectionAlive(this.connection)) {
       return this.connection;
     }

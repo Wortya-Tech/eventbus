@@ -121,4 +121,22 @@ test("EventBusService", async (t) => {
         const subs = (service as unknown as Record<string, Map<string, MessageHandler>>)["subscribers"];
         assert.equal(subs.size, 0);
     });
+
+    await t.test("close() should handle error when canceling consumer", async () => {
+        const service = new EventBusService(
+            "test-exchange",
+            "test-queue",
+            "test-source",
+            "1.0.0",
+        );
+        const priv = service as unknown as Record<string, unknown>;
+        priv["consumerTag"] = "test-tag";
+        priv["channel"] = {
+            cancel: () => Promise.reject(new Error("cancel failed")),
+            close: () => Promise.resolve(),
+        };
+
+        await service.close();
+        assert.ok(true);
+    });
 });

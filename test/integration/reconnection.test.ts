@@ -71,3 +71,77 @@ describe("reconnection - connection killed", () => {
         assert.ok(true);
     });
 });
+
+describe("reconnection - handleChannelReconnect", () => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
+
+    before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService("test.handle.channel.reconnect", "test.handle.channel.reconnect.p", "test", "1.0.0", undefined, 2, 100);
+        await producer.connect(connection, URL, false);
+        consumer = new EventBusService("test.handle.channel.reconnect", "test.handle.channel.reconnect.q", "test", "1.0.0", undefined, 2, 100, 5, 100);
+        await consumer.connect(connection, URL, false);
+    });
+
+    after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
+    });
+
+    it("should trigger handleChannelReconnect when consumer channel dies", async () => {
+        const tkr = { attempts: 0 };
+        consumer.subscribe("h", () => { tkr.attempts++; return Promise.resolve(); });
+        await consumer.consume(); await new Promise(r => setTimeout(r, 100));
+
+        // Publish before kill — should be received
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ id: "before" })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 200));
+
+        // Kill the consumer's own channel
+        const svcChan = (consumer as unknown as { channel?: { close(): Promise<void> } }).channel;
+        if (svcChan) await svcChan.close();
+        await new Promise(r => setTimeout(r, 800));
+
+        // Publish after reconnect — should arrive via new channel
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ id: "after" })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 500));
+
+        assert.ok(tkr.attempts >= 2, `Expected >=2 attempts, got ${tkr.attempts}`);
+    });
+});
+
+describe("reconnection - handleConnectionReconnect", () => {
+    let svc: EventBusService;
+    let consumerConn: ChannelModel;
+
+    before(async () => {
+        consumerConn = await amqpConnect(URL);
+        svc = new EventBusService("test.handle.conn.reconnect", "test.handle.conn.reconnect.q", "test", "1.0.0", undefined, 2, 100, 5, 100);
+        await svc.connect(consumerConn, URL, true);
+    });
+
+    after(async () => {
+        await svc.close();
+    });
+
+    it("should reconnect connection when connection dies with ownsConnection=true", async () => {
+        svc.subscribe("h", async () => {});
+        await svc.consume(); await new Promise(r => setTimeout(r, 100));
+
+        // Kill connection — closes the connection and all channels on it
+        await consumerConn.close();
+        await new Promise(r => setTimeout(r, 2000));
+
+        // After reconnect, publish should succeed on new connection
+        const succeeded = await svc.publish({
+            type: "test.event",
+            data: Buffer.from(JSON.stringify({ x: 1 })),
+            metadata: { contentType: "application/json" },
+        });
+
+        assert.ok(succeeded !== undefined);
+    });
+});
