@@ -1,12 +1,14 @@
-// TODO: transformar isso de alguma forma em library
-import type { Channel, ChannelModel, Message, MessageProperties } from "amqplib";
+import type {
+  Channel,
+  ChannelModel,
+  Message,
+  MessageProperties,
+} from "amqplib";
 import type { Logger } from "pino";
 import { connect as rabbitmqConnect } from "amqplib";
 import { randomUUID } from "node:crypto";
 import { pino } from "pino";
-import type { Buffer } from "node:buffer";
-import { setTimeout as setTimeout } from "node:timers/promises";
-import { URL } from "node:url";
+import { setTimeout } from "node:timers/promises";
 
 /**
  * Event payload to be published to the event bus.
@@ -90,7 +92,7 @@ export class ConnectionProvider {
     });
     this.connection = connection;
     return connection;
-  }
+  };
 }
 
 /**
@@ -290,9 +292,7 @@ export class EventBusService {
       this.connection.on("close", async () => {
         const isIntentional = intentionalCloseMap.get(this.connection!);
         if (isIntentional) {
-          this.logger.info(
-            "RabbitMQ connection closed intentionally",
-          );
+          this.logger.info("RabbitMQ connection closed intentionally");
         } else {
           this.logger.warn("RabbitMQ connection closed unexpectedly");
           await this.handleConnectionReconnect();
@@ -308,7 +308,9 @@ export class EventBusService {
   private isConnectionAlive(connection: ChannelModel): boolean {
     try {
       if (!connection) return false;
-      const con = connection as { connection?: { stream?: { destroyed?: boolean } } };
+      const con = connection as {
+        connection?: { stream?: { destroyed?: boolean } };
+      };
       if (!con.connection) return false;
       if (!con.connection.stream) return false;
       return !con.connection.stream.destroyed;
@@ -320,7 +322,9 @@ export class EventBusService {
   private isChannelHealthy(channel?: Channel): boolean {
     try {
       if (!channel) return false;
-      const ch = channel as { connection?: { stream?: { destroyed?: boolean } } };
+      const ch = channel as {
+        connection?: { stream?: { destroyed?: boolean } };
+      };
       if (!ch.connection) return false;
       if (!ch.connection.stream) return false;
       return !ch.connection.stream.destroyed;
@@ -342,10 +346,7 @@ export class EventBusService {
       try {
         this.connection = await this.connectionProvider();
       } catch (error) {
-        this.logger.error(
-          { error },
-          "Failed to get connection from provider",
-        );
+        this.logger.error({ error }, "Failed to get connection from provider");
       }
     }
 
@@ -396,9 +397,7 @@ export class EventBusService {
 
   private async handleChannelReconnect(): Promise<void> {
     if (this.isReconnecting) {
-      this.logger.info(
-        "Channel reconnection already in progress, skipping",
-      );
+      this.logger.info("Channel reconnection already in progress, skipping");
       return;
     }
 
@@ -412,8 +411,8 @@ export class EventBusService {
     this.isReconnecting = true;
     this.connectionRetryCount++;
 
-    const delay = this.INITIAL_RECONNECT_DELAY *
-      Math.pow(2, this.connectionRetryCount - 1);
+    const delay =
+      this.INITIAL_RECONNECT_DELAY * Math.pow(2, this.connectionRetryCount - 1);
     this.logger.info(
       `Attempting to reconnect channel (attempt ${this.connectionRetryCount}/${this.MAX_CONNECTION_RETRIES}) in ${delay}ms`,
     );
@@ -438,18 +437,14 @@ export class EventBusService {
       // Re-setup channel event handlers
       this.channel.on("error", async (err: unknown) => {
         this.logger.error({ err }, "RabbitMQ channel error");
-        const isIntentional = intentionalChannelCloseMap.get(
-          this.channel!,
-        );
+        const isIntentional = intentionalChannelCloseMap.get(this.channel!);
         if (!isIntentional) {
           await this.handleChannelReconnect();
         }
       });
 
       this.channel.on("close", async () => {
-        const isIntentional = intentionalChannelCloseMap.get(
-          this.channel!,
-        );
+        const isIntentional = intentionalChannelCloseMap.get(this.channel!);
         if (isIntentional) {
           this.logger.info("RabbitMQ channel closed intentionally");
         } else {
@@ -462,11 +457,9 @@ export class EventBusService {
       await this.channel.assertExchange(this.exchangeName, "fanout", {
         durable: true,
       });
-      await this.channel.assertExchange(
-        this.deadLetterExchange,
-        "direct",
-        { durable: true },
-      );
+      await this.channel.assertExchange(this.deadLetterExchange, "direct", {
+        durable: true,
+      });
       await this.channel.assertExchange(this.retryExchange, "fanout", {
         durable: true,
       });
@@ -474,9 +467,7 @@ export class EventBusService {
 
       // Restart consumer if there are subscribers
       if (this.subscribers.size > 0) {
-        this.logger.info(
-          "Restarting consumer after channel reconnection",
-        );
+        this.logger.info("Restarting consumer after channel reconnection");
         await this.consume();
       }
 
@@ -493,9 +484,7 @@ export class EventBusService {
 
   private async handleConnectionReconnect(): Promise<void> {
     if (this.isReconnecting) {
-      this.logger.info(
-        "Connection reconnection already in progress, skipping",
-      );
+      this.logger.info("Connection reconnection already in progress, skipping");
       return;
     }
 
@@ -509,8 +498,8 @@ export class EventBusService {
     this.isReconnecting = true;
     this.connectionRetryCount++;
 
-    const delay = this.INITIAL_RECONNECT_DELAY *
-      Math.pow(2, this.connectionRetryCount - 1);
+    const delay =
+      this.INITIAL_RECONNECT_DELAY * Math.pow(2, this.connectionRetryCount - 1);
     this.logger.info(
       `Attempting to reconnect (attempt ${this.connectionRetryCount}/${this.MAX_CONNECTION_RETRIES}) in ${delay}ms`,
     );
@@ -600,77 +589,80 @@ export class EventBusService {
     // Ensure we have a healthy channel before consuming
     const channel = await this.ensureChannel();
 
-    const result = await channel.consume(this.queueName, async (msg: Message | null) => {
-      if (!msg) return;
+    const result = await channel.consume(
+      this.queueName,
+      async (msg: Message | null) => {
+        if (!msg) return;
 
-      this.logger.info(
-        msg.properties,
-        `Received message of type ${msg.properties.contentType}`,
-      );
-
-      try {
-        const retryCount = (msg.properties.headers?.["x-retry-count"] ||
-          0) as number;
-
-        // Get all handlers for this message type
-        const handlers = this.subscribers.values();
-
-        // Execute all handlers
         this.logger.info(
           msg.properties,
           `Received message of type ${msg.properties.contentType}`,
         );
-        const results = await Promise.allSettled(
-          Array.from(handlers).map((handler) => handler(msg.content, msg.properties)),
-        );
 
-        // Check if any handlers failed
-        const hasFailures = results.some(
-          (result) => result.status === "rejected",
-        );
+        try {
+          const retryCount = (msg.properties.headers?.["x-retry-count"] ||
+            0) as number;
 
-        if (hasFailures) {
-          if (retryCount >= this.MAX_RETRIES) {
-            // Send to dead letter queue by rejecting without requeue
-            this.logger.warn(
-              msg.properties,
-              `Message exceeded maximum retries (${this.MAX_RETRIES}), sending to DLQ`,
-            );
-            this.channel?.nack(msg, false, false);
+          // Get all handlers for this message type
+          const handlers = this.subscribers.values();
+
+          // Execute all handlers
+          this.logger.info(
+            msg.properties,
+            `Received message of type ${msg.properties.contentType}`,
+          );
+          const results = await Promise.allSettled(
+            Array.from(handlers).map((handler) =>
+              handler(msg.content, msg.properties),
+            ),
+          );
+
+          // Check if any handlers failed
+          const hasFailures = results.some(
+            (result) => result.status === "rejected",
+          );
+
+          if (hasFailures) {
+            if (retryCount >= this.MAX_RETRIES) {
+              // Send to dead letter queue by rejecting without requeue
+              this.logger.warn(
+                msg.properties,
+                `Message exceeded maximum retries (${this.MAX_RETRIES}), sending to DLQ`,
+              );
+              this.channel?.nack(msg, false, false);
+            } else {
+              // Publish to retry exchange with incremented counter
+              this.logger.info(
+                msg.properties,
+                `Retrying message (attempt ${retryCount + 1} of ${this.MAX_RETRIES})`,
+              );
+              const headers = {
+                ...msg.properties.headers,
+                "x-retry-count": retryCount + 1,
+                "x-first-death-exchange": this.exchangeName,
+                "x-first-death-queue": this.queueName,
+              };
+
+              this.channel?.publish(this.retryExchange, "", msg.content, {
+                ...msg.properties,
+                headers,
+              });
+              this.channel?.ack(msg);
+            }
           } else {
-            // Publish to retry exchange with incremented counter
-            this.logger.info(
-              msg.properties,
-              `Retrying message (attempt ${retryCount + 1} of ${this.MAX_RETRIES})`,
-            );
-            const headers = {
-              ...msg.properties.headers,
-              "x-retry-count": retryCount + 1,
-              "x-first-death-exchange": this.exchangeName,
-              "x-first-death-queue": this.queueName,
-            };
-
-            this.channel?.publish(
-              this.retryExchange,
-              "",
-              msg.content,
-              { ...msg.properties, headers },
-            );
+            this.logger.info(msg.properties, "Message success delivey");
             this.channel?.ack(msg);
           }
-        } else {
-          this.logger.info(msg.properties, "Message success delivey");
-          this.channel?.ack(msg);
+        } catch (error) {
+          this.logger.error(
+            { error, propreties: msg.properties },
+            `Error processing message`,
+          );
+          // On unexpected errors, send directly to DLQ
+          this.channel?.nack(msg, false, false);
         }
-      } catch (error) {
-        this.logger.error(
-          { error, propreties: msg.properties },
-          `Error processing message`,
-        );
-        // On unexpected errors, send directly to DLQ
-        this.channel?.nack(msg, false, false);
-      }
-    });
+      },
+    );
 
     this.consumerTag = result.consumerTag;
   }

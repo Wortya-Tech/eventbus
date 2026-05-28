@@ -1,189 +1,101 @@
-import { assertEquals } from "@std/assert";
-import { EventBusService } from "../../src/main.ts";
-import {
-  cleanupWithGrace,
-  connectToRabbitMQ,
-  createConsumer,
-  createExchangeName,
-  createProducer,
-  createQueueName,
-  createTestData,
-  encodeTestData,
-  sleep,
-} from "./helpers.ts";
+import { describe, it, before, after } from "node:test";
+import assert from "node:assert/strict";
+import { connect as amqpConnect } from "amqplib";
+import type { ChannelModel } from "amqplib";
+import { EventBusService } from "../../src/main.js";
 
-Deno.test("should stop consuming after cancel", async () => {
-  const connection = await connectToRabbitMQ();
-  const services: EventBusService[] = [];
-  const exchangeName = createExchangeName("cancel");
-  const queueName = createQueueName("consumer");
-  const producerName = `producer-${Date.now()}`;
+const URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
 
-  try {
-    const producer = await createProducer(
-      exchangeName,
-      connection,
-      producerName,
-      "amqp://guest:guest@localhost:5672",
-      false,
-    );
-    services.push(producer);
+describe("lifecycle - cancel", () => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
 
-    let receivedCount = 0;
-    const consumer = await createConsumer(
-      exchangeName,
-      queueName,
-      connection,
-      false,
-    );
-    services.push(consumer);
-
-    consumer.subscribe("handler", () => {
-      receivedCount++;
-      return Promise.resolve();
+    before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService("test.lifecycle.cancel", "test.lifecycle.cancel.p", "test", "1.0.0", undefined, 2, 100);
+        await producer.connect(connection, URL, false);
+        consumer = new EventBusService("test.lifecycle.cancel", "test.lifecycle.cancel.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await consumer.connect(connection, URL, false);
     });
 
-    await consumer.consume();
-    await sleep(100);
-
-    for (let i = 0; i < 3; i++) {
-      await producer.publish({
-        type: "test.event",
-        data: encodeTestData(createTestData()),
-        metadata: { contentType: "application/json" },
-      });
-    }
-
-    await sleep(500);
-
-    const countBeforeCancel = receivedCount;
-    consumer.close();
-
-    await sleep(100);
-
-    await producer.publish({
-      type: "test.event",
-      data: encodeTestData(createTestData()),
-      metadata: { contentType: "application/json" },
+    after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
     });
 
-    await sleep(500);
-
-    assertEquals(receivedCount, countBeforeCancel);
-  } finally {
-    await cleanupWithGrace(connection, exchangeName, [queueName, producerName], services);
-  }
+    it("should stop consuming after cancel", async () => {
+        let count = 0;
+        consumer.subscribe("h", () => { count++; return Promise.resolve(); });
+        await consumer.consume(); await new Promise(r => setTimeout(r, 100));
+        for (let i = 0; i < 3; i++) await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ i })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 500));
+        const before = count;
+        consumer.close(); await new Promise(r => setTimeout(r, 100));
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 99 })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 500));
+        assert.equal(count, before);
+    });
 });
 
-Deno.test("should gracefully close all resources", async () => {
-  const connection = await connectToRabbitMQ();
-  const services: EventBusService[] = [];
-  const exchangeName = createExchangeName("graceful-shutdown");
-  const queueName = createQueueName("consumer");
-  const producerName = createQueueName("producer");
+describe("lifecycle - graceful close", () => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
 
-  try {
-    const producer = new EventBusService(
-      exchangeName,
-      producerName,
-      "test-producer",
-      "1.0.0",
-    );
-    await producer.connect(
-      connection,
-      "amqp://guest:guest@localhost:5672",
-      false,
-    );
-    services.push(producer);
-
-    const consumer = new EventBusService(
-      exchangeName,
-      queueName,
-      "test-consumer",
-      "1.0.0",
-    );
-    await consumer.connect(
-      connection,
-      "amqp://guest:guest@localhost:5672",
-      false,
-    );
-    services.push(consumer);
-
-    consumer.subscribe("handler", async () => {});
-    await consumer.consume();
-
-    await producer.publish({
-      type: "test.event",
-      data: encodeTestData(createTestData()),
-      metadata: { contentType: "application/json" },
+    before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService("test.lifecycle.graceful", "test.lifecycle.graceful.p", "test", "1.0.0");
+        await producer.connect(connection, URL, false);
+        consumer = new EventBusService("test.lifecycle.graceful", "test.lifecycle.graceful.q", "test", "1.0.0");
+        await consumer.connect(connection, URL, false);
     });
 
-    await sleep(100);
+    after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
+    });
 
-    await consumer.close();
-    await producer.close();
-
-    assertEquals(true, true);
-  } finally {
-    await cleanupWithGrace(connection, exchangeName, [queueName, producerName], services);
-  }
+    it("should gracefully close all resources", async () => {
+        consumer.subscribe("h", async () => {});
+        await consumer.consume();
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 1 })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 100));
+        assert.ok(true);
+    });
 });
 
-Deno.test("should unsubscribe and stop processing", async () => {
-  const connection = await connectToRabbitMQ();
-  const services: EventBusService[] = [];
-  const exchangeName = createExchangeName("unsubscribe");
-  const queueName = createQueueName("consumer");
-  const producerName = createQueueName("producer");
+describe("lifecycle - unsubscribe", () => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
 
-  try {
-    const producer = await createProducer(
-      exchangeName,
-      connection,
-      producerName,
-      "amqp://guest:guest@localhost:5672",
-      false,
-    );
-    services.push(producer);
-
-    let handlerCalledCount = 0;
-    const consumer = await createConsumer(
-      exchangeName,
-      queueName,
-      connection,
-      false,
-    );
-    services.push(consumer);
-
-    consumer.subscribe("handler", () => {
-      handlerCalledCount++;
-      return Promise.resolve();
+    before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService("test.lifecycle.unsub", "test.lifecycle.unsub.p", "test", "1.0.0", undefined, 2, 100);
+        await producer.connect(connection, URL, false);
+        consumer = new EventBusService("test.lifecycle.unsub", "test.lifecycle.unsub.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await consumer.connect(connection, URL, false);
     });
 
-    await consumer.consume();
-    await sleep(100);
-
-    await producer.publish({
-      type: "test.event",
-      data: encodeTestData(createTestData()),
-      metadata: { contentType: "application/json" },
+    after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
     });
 
-    await sleep(200);
-
-    const countBeforeUnsubscribe = handlerCalledCount;
-    consumer.unsubscribe("handler");
-
-    await producer.publish({
-      type: "test.event",
-      data: encodeTestData(createTestData()),
-      metadata: { contentType: "application/json" },
+    it("should unsubscribe and stop processing", async () => {
+        let count = 0;
+        consumer.subscribe("h", () => { count++; return Promise.resolve(); });
+        await consumer.consume(); await new Promise(r => setTimeout(r, 100));
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 1 })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 200));
+        const before = count;
+        consumer.unsubscribe("h");
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 2 })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 200));
+        assert.equal(count, before);
     });
-
-    await sleep(200);
-
-    assertEquals(handlerCalledCount, countBeforeUnsubscribe);
-  } finally {
-    await cleanupWithGrace(connection, exchangeName, [queueName, producerName], services);
-  }
 });

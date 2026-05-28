@@ -10,244 +10,120 @@ dedicated queue with retry and DLQ (Dead Letter Queue) support.
 ```
 fanaticjs/
 ├── src/
-│   └── main.ts          # Core EventBusService implementation
+│   └── main.ts          # Core EventBusService + ConnectionProvider
+├── test/
+│   ├── unit/            # Unit tests (no RabbitMQ required)
+│   ├── integration/     # Integration tests (require RabbitMQ)
+│   └── e2e/             # End-to-end tests (full workflows)
+├── doc/                 # Documentation
+├── tsconfig.json
+├── tsconfig.prod.json
+├── eslint.config.js
 └── AGENTS.md            # This file
 ```
 
 ## Development Commands
 
-### Setup
-
 ```bash
 # Type-check
-deno check src/**/*.ts test/**/*.ts
+npm run check
 
 # Lint
-deno lint
+npm run lint
 
-# Format
-deno fmt
-
-# Format check
-deno fmt --check
-```
-
-### Testing
-
-```bash
-# Run all tests
-deno test -A
+# Run all tests (sequential)
+npm test
 
 # Run only unit tests
-deno test -A test/unit
+npm run test:unit
 
-# Run E2E tests with Docker Compose (starts RabbitMQ automatically)
-deno task rabbitmq:start
-deno test -A test/e2e
-deno task rabbitmq:stop
+# Run integration tests
+npm run test:integration
 
-# Run specific test file
-deno test -A test/unit/EventBusService.test.ts
-
-# Start RabbitMQ for manual E2E testing
-deno task rabbitmq:start
-
-# Stop RabbitMQ
-deno task rabbitmq:stop
-```
-
-### Publishing
-
-```bash
-# Publish to JSR
-deno publish --allow-slow-types
-```
-
-## Code Style Guidelines
-
-### Import Style
-
-- Keep imports at top of file, grouped by type:
-  1. Node/core imports (e.g., `node:crypto`, `node:crypto`)
-  2. External package imports
-  3. Internal type imports
-  4. Internal value imports
-
-Example:
-
-```typescript
-import type { Channel, ChannelModel } from "amqplib";
-import { connect as rabbitmqConnect } from "amqplib";
-import { randomUUID } from "node:crypto";
-import type { Logger } from "pino";
-```
-
-### Formatting
-
-- Indentation: 4 spaces (not tabs)
-- Quotes: Double quotes for strings and object keys
-- Semicolons: Omitted (not used)
-- Trailing commas: Omitted
-- Line length: Try to stay under 100 characters
-- Max empty lines: 2 between blocks
-
-### Types
-
-- Use `interface` for object shapes
-- Use `type` for unions, primitives, and mapped types
-- Type assertions: Use `as type` sparingly; prefer type guards
-- ESLint disable for necessary `any` types:
-  `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
-
-### Naming Conventions
-
-- Classes: PascalCase (`EventBusService`, `ConnectionProvider`)
-- Functions/methods: camelCase (`createQueue`, `handleConnectionReconnect`)
-- Constants: SCREAMING_SNAKE_CASE (`MAX_RETRIES`, `RETRY_DELAY`)
-- Private properties: Use TypeScript `private` keyword (no underscore prefix)
-- Map/Set variables: Descriptive names indicating structure (e.g., `subscribers`,
-  `intentionalCloseMap`)
-
-### Error Handling
-
-- Use try/catch for async operations that may fail
-- Always log errors with context using the pino logger:
-  ```typescript
-  try {
-    await operation();
-  } catch (error) {
-    this.logger.error({ error, context }, "Descriptive error message");
-    throw error;
-  }
-  ```
-- Use `Promise.allSettled()` for parallel operations where partial success is acceptable
-- For channel/connection errors, check if closure was intentional using WeakMap
-
-### RabbitMQ Patterns
-
-**Exchange Setup:**
-
-```typescript
-await channel.assertExchange(exchangeName, "fanout", { durable: true });
-```
-
-**Queue Creation with DLQ:**
-
-```typescript
-await channel.assertQueue(queueName, {
-  durable: true,
-  arguments: {
-    "x-dead-letter-exchange": deadLetterExchange,
-    "x-dead-letter-routing-key": "",
-  },
-});
-```
-
-**Retry Queue with TTL:**
-
-```typescript
-await channel.assertQueue(retryQueueName, {
-  durable: true,
-  arguments: {
-    "x-dead-letter-exchange": originalExchange,
-    "x-message-ttl": retryDelay,
-  },
-});
-```
-
-**Message Publishing:**
-
-```typescript
-await channel.publish(exchange, routingKey, content, {
-  type,
-  appId: `${source}@${version}+${exchange}`,
-  timestamp,
-  persistent,
-  contentType,
-  messageId: randomUUID(),
-  correlationId,
-});
-```
-
-**Message Consumption:**
-
-- Use `channel.consume()` with async handler
-- Acknowledge on success: `this.channel?.ack(msg)`
-- On retry: publish to retry exchange, then ack original
-- On permanent failure: `this.channel?.nack(msg, false, false)`
-
-**Connection Management:**
-
-- Track intentional closes using WeakMap to avoid spurious reconnection
-- Implement exponential backoff for reconnection
-- Always check connection/channel health before operations
-- Support both owned and shared connections via `ConnectionProvider`
-
-### WeakMap Usage
-
-Use WeakMap for tracking intentional closure to prevent memory leaks:
-
-```typescript
-const intentionalCloseMap = new WeakMap<ChannelModel, boolean>();
-// Mark as intentionally closed
-intentionalCloseMap.set(connection, true);
-// Check before reconnecting
-const isIntentional = intentionalCloseMap.get(connection);
-```
-
-### Logging
-
-- Use pino logger (passed to classes)
-- Log levels: `info` for normal ops, `warn` for unexpected but recoverable, `error` for failures
-- Provide context object first: `this.logger.info({ context }, "message")`
-- Include relevant metadata in context objects
-
-### Architecture Patterns
-
-**Fanout Exchange Strategy:**
-
-- Single exchange publishes to all bound queues
-- Each consumer gets independent queue with own retry/DLQ
-- Failures in one consumer don't affect others
-
-**Retry Mechanism:**
-
-- Track retry count in message headers: `x-retry-count`
-- Increment on each retry attempt
-- After MAX_RETRIES exceeded, send to DLQ
-- Configurable delay between retries in retry queue TTL
-
-**Reconnection Logic:**
-
-- Implement exponential backoff: `INITIAL_RECONNECT_DELAY * 2^(retryCount - 1)`
-- Limit max reconnection attempts
-- Use flags to prevent concurrent reconnections
-- Restart consumers after successful reconnect
-
-## Testing Commands
-
-```bash
-# Run all tests
-deno task test
-
-# Run only unit tests
-deno task test:unit
-
-# Run E2E tests (automatically starts RabbitMQ with Docker Compose)
-deno task test:e2e
-
-# Run specific test file
-deno test test/unit/EventBusService.test.ts
+# Run E2E tests
+npm run test:e2e
 ```
 
 ## Dependencies
 
 - `amqplib` (npm): RabbitMQ client library
 - `pino` (npm): Logger
-- `node:crypto`: UUID generation (Deno's Node.js compatibility layer)
-- `@std/assert` (jsr): Testing utilities
+- `node:crypto`: UUID generation
 
-## Notes
+## Dev Dependencies
 
-- ES modules using `node:` protocol for Node.js compatibility layer in Deno
-- No explicit TypeScript config needed (configured in deno.json)
+- `typescript`: Type checking and compilation
+- `eslint` + `typescript-eslint` + `globals`: Linting
+- `tsx`: TypeScript test execution
+- `@types/node`: Node.js type definitions
+
+## Testing
+
+All tests run with `--test-concurrency 1` (sequential). Tests use `node:test` with TAP reporter.
+
+### Test Patterns
+
+**Unit tests** use `test()` + `t.test()` subtests:
+```typescript
+import test from "node:test";
+import assert from "node:assert/strict";
+
+test("EventBusService", async (t) => {
+    await t.test("should use default logger", () => {
+        assert.equal(typeof svc["logger"], "object");
+    });
+});
+```
+
+**Integration/E2E tests** use `describe()`/`it()` + `before()`/`after()`:
+```typescript
+import { describe, it, before, after } from "node:test";
+
+describe("retry - success", () => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
+
+    before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService(...);
+        await producer.connect(connection);
+        consumer = new EventBusService(...);
+        await consumer.connect(connection);
+    });
+
+    after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
+    });
+
+    it("should retry failed handler", async () => {
+        // test body
+    });
+});
+```
+
+Rules:
+- Each test case is its own `describe()` block
+- `before()` creates all resources (connection + services)
+- `after()` destroys all resources
+- `before` and `after` are always paired
+- No resource sharing between test cases
+
+### RabbitMQ for integration/E2E tests
+
+```bash
+npm run rabbitmq:start
+npm run test:integration
+npm run test:e2e
+npm run rabbitmq:stop
+```
+
+## Code Style Guidelines
+
+- Indentation: 4 spaces
+- Quotes: Double quotes
+- Semicolons: Omitted
+- Module system: ESM with `nodenext` resolution
+- Relative imports use `.js` extension

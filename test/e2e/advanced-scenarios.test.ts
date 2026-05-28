@@ -1,266 +1,140 @@
-import { assertEquals } from "@std/assert";
-import { TextDecoder } from "node:util";
-import { EventBusService } from "../../src/main.ts";
-import type { TestData } from "./helpers.ts";
-import {
-  cleanupWithGrace,
-  connectToRabbitMQ,
-  createConsumer,
-  createExchangeName,
-  createProducer,
-  createQueueName,
-  createTestData,
-  encodeTestData,
-  sleep,
-  waitForMessages,
-} from "./helpers.ts";
+import { describe, it, before, after } from "node:test";
+import assert from "node:assert/strict";
+import { connect as amqpConnect } from "amqplib";
+import type { ChannelModel } from "amqplib";
+import { EventBusService } from "../../src/main.js";
 
-Deno.test("should handle concurrent publishing", async () => {
-  const connection = await connectToRabbitMQ();
-  const services: EventBusService[] = [];
-  const exchangeName = createExchangeName("concurrent");
-  const queueName = createQueueName("consumer");
-  const producerName = `producer-${Date.now()}`;
+const URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
 
-  try {
-    const producer = await createProducer(
-      exchangeName,
-      connection,
-      producerName,
-      "amqp://guest:guest@localhost:5672",
-      false,
-    );
-    services.push(producer);
+describe("advanced - concurrent publishing", () => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
 
-    const receivedMessages: string[] = [];
-    const consumer = await createConsumer(
-      exchangeName,
-      queueName,
-      connection,
-      false,
-    );
-    services.push(consumer);
-
-    consumer.subscribe("handler", async (data) => {
-      const parsed = JSON.parse(new TextDecoder().decode(data)) as { id: string };
-      receivedMessages.push(parsed.id);
-      await Promise.resolve();
+    before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService("test.advanced.concurrent", "test.advanced.concurrent.p", "test", "1.0.0", undefined, 2, 100);
+        await producer.connect(connection, URL, false);
+        consumer = new EventBusService("test.advanced.concurrent", "test.advanced.concurrent.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await consumer.connect(connection, URL, false);
     });
 
-    await consumer.consume();
-    await sleep(100);
+    after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
+    });
 
-    const messageCount = 10;
-    const promises = [];
-    for (let i = 0; i < messageCount; i++) {
-      const testData = createTestData(`msg-${i}`);
-      promises.push(
-        producer.publish({
-          type: "test.event",
-          data: encodeTestData(testData),
-          metadata: { contentType: "application/json" },
-        }),
-      );
-    }
-
-    await Promise.all(promises);
-    await sleep(1500);
-
-    await waitForMessages(
-      messageCount,
-      () => receivedMessages.length,
-      5000,
-    );
-
-    assertEquals(receivedMessages.length, messageCount);
-  } finally {
-    await cleanupWithGrace(connection, exchangeName, [queueName, producerName], services);
-  }
+    it("should handle concurrent publishing", async () => {
+        const msgs: string[] = [];
+        consumer.subscribe("h", async (buf) => { msgs.push(JSON.parse(new TextDecoder().decode(buf)).id); });
+        await consumer.consume(); await new Promise(r => setTimeout(r, 100));
+        const N = 10;
+        await Promise.all(Array.from({ length: N }, (_, i) =>
+            producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ id: `msg-${i}` })), metadata: { contentType: "application/json" } })
+        ));
+        await new Promise(r => setTimeout(r, 1500));
+        const start = Date.now();
+        while (Date.now() - start < 5000) { if (msgs.length >= N) break; await new Promise(r => setTimeout(r, 50)); }
+        assert.equal(msgs.length, N);
+    });
 });
 
-Deno.test("should maintain message order during retries", async () => {
-  const connection = await connectToRabbitMQ();
-  const services: EventBusService[] = [];
-  const exchangeName = createExchangeName("order");
-  const queueName = createQueueName("consumer");
-  const producerName = createQueueName("producer");
+describe("advanced - message order", () => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
 
-  try {
-    const producer = await createProducer(
-      exchangeName,
-      connection,
-      producerName,
-      "amqp://guest:guest@localhost:5672",
-      false,
-    );
-    services.push(producer);
-
-    const receivedOrder: string[] = [];
-    const consumer = await createConsumer(
-      exchangeName,
-      queueName,
-      connection,
-      false,
-    );
-    services.push(consumer);
-
-    let failCounter = 0;
-    consumer.subscribe("handler", async (data) => {
-      const parsed = JSON.parse(new TextDecoder().decode(data)) as { id: string };
-      receivedOrder.push(parsed.id);
-
-      await Promise.resolve();
-      if (parsed.id === "order-1" && failCounter === 0) {
-        failCounter++;
-        throw new Error("First message fails once");
-      }
+    before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService("test.advanced.order", "test.advanced.order.p", "test", "1.0.0", undefined, 2, 100);
+        await producer.connect(connection, URL, false);
+        consumer = new EventBusService("test.advanced.order", "test.advanced.order.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await consumer.connect(connection, URL, false);
     });
 
-    await consumer.consume();
-    await sleep(100);
-
-    await producer.publish({
-      type: "test.event",
-      data: encodeTestData(createTestData("order-0")),
-      metadata: { contentType: "application/json" },
+    after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
     });
 
-    await sleep(50);
-
-    await producer.publish({
-      type: "test.event",
-      data: encodeTestData(createTestData("order-1")),
-      metadata: { contentType: "application/json" },
+    it("should maintain message order during retries", async () => {
+        const order: string[] = [];
+        let fail = 0;
+        consumer.subscribe("h", async (buf) => { const { id } = JSON.parse(new TextDecoder().decode(buf)); order.push(id); if (id === "order-1" && fail === 0) { fail++; throw new Error("fail"); } });
+        await consumer.consume(); await new Promise(r => setTimeout(r, 100));
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ id: "order-0" })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 50));
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ id: "order-1" })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 50));
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ id: "order-2" })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 3000));
+        assert.equal(order[0], "order-0"); assert.equal(order[order.length - 1], "order-1");
     });
-
-    await sleep(50);
-
-    await producer.publish({
-      type: "test.event",
-      data: encodeTestData(createTestData("order-2")),
-      metadata: { contentType: "application/json" },
-    });
-
-    await sleep(1500);
-
-    assertEquals(receivedOrder[0], "order-0");
-    assertEquals(receivedOrder[receivedOrder.length - 1], "order-1");
-  } finally {
-    await cleanupWithGrace(connection, exchangeName, [queueName, producerName], services);
-  }
 });
 
-Deno.test("should handle message publish before consumer is ready", async () => {
-  const connection = await connectToRabbitMQ();
-  const services: EventBusService[] = [];
-  const exchangeName = createExchangeName("pre-publish");
-  const producerName = `producer-${Date.now()}`;
-  const consumerName = `consumer-${Date.now()}`;
+describe("advanced - pre publish", () => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
 
-  try {
-    const producer = await createProducer(
-      exchangeName,
-      connection,
-      producerName,
-      "amqp://guest:guest@localhost:5672",
-      false,
-    );
-    services.push(producer);
-
-    const consumer = await createConsumer(
-      exchangeName,
-      consumerName,
-      connection,
-      false,
-    );
-    services.push(consumer);
-
-    let receivedData: TestData | null = null;
-    consumer.subscribe("handler", (data) => {
-      receivedData = JSON.parse(new TextDecoder().decode(data)) as TestData;
-      return Promise.resolve();
+    before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService("test.advanced.prepub", "test.advanced.prepub.p", "test", "1.0.0", undefined, 2, 100);
+        await producer.connect(connection, URL, false);
+        consumer = new EventBusService("test.advanced.prepub", "test.advanced.prepub.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await consumer.connect(connection, URL, false);
     });
 
-    await consumer.consume();
-    await sleep(100);
-
-    const testData = createTestData("pre-consumer");
-    await producer.publish({
-      type: "test.event",
-      data: encodeTestData(testData),
-      metadata: { contentType: "application/json" },
+    after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
     });
 
-    await sleep(300);
-
-    if (receivedData === null) {
-      throw new Error("Should have received message");
-    }
-    const data = receivedData as TestData;
-    assertEquals(data.id, testData.id);
-  } finally {
-    await cleanupWithGrace(connection, exchangeName, [producerName, consumerName], services);
-  }
+    it("should handle message publish before consumer is ready", async () => {
+        let received: { id: string } | null = null;
+        consumer.subscribe("h", (buf) => { received = JSON.parse(new TextDecoder().decode(buf)); return Promise.resolve(); });
+        await consumer.consume(); await new Promise(r => setTimeout(r, 100));
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ id: "pre" })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 300));
+        if (!received) throw new Error("no message");
+        assert.equal((received as { id: string }).id, "pre");
+    });
 });
 
-Deno.test("should include all message metadata", async () => {
-  const connection = await connectToRabbitMQ();
-  const services: EventBusService[] = [];
-  const exchangeName = createExchangeName("metadata");
-  const queueName = createQueueName("consumer");
-  const producerName = createQueueName("producer");
+describe("advanced - metadata", () => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
 
-  try {
-    const producer = new EventBusService(
-      exchangeName,
-      producerName,
-      "my-service",
-      "2.0.0",
-    );
-    await producer.connect(
-      connection,
-      "amqp://guest:guest@localhost:5672",
-      false,
-    );
-    services.push(producer);
-
-    let receivedProps: Record<string, string | number> | null = null;
-    const consumer = await createConsumer(
-      exchangeName,
-      queueName,
-      connection,
-      false,
-    );
-    services.push(consumer);
-
-    consumer.subscribe("handler", (_data, properties) => {
-      receivedProps = properties;
-      return Promise.resolve();
+    before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService("test.advanced.metadata", "test.advanced.metadata.p", "my-service", "2.0.0");
+        await producer.connect(connection, URL, false);
+        consumer = new EventBusService("test.advanced.metadata", "test.advanced.metadata.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await consumer.connect(connection, URL, false);
     });
 
-    await consumer.consume();
-    await sleep(100);
-
-    const correlationId = "test-correlation-123";
-    await producer.publish({
-      type: "test.event",
-      data: encodeTestData(createTestData()),
-      metadata: {
-        contentType: "application/json",
-        contentEncoding: "utf-8",
-        correlationId,
-      },
+    after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
     });
 
-    await sleep(1000);
-
-    assertEquals(receivedProps!.appId, "my-service@2.0.0+" + exchangeName);
-    assertEquals(receivedProps!.contentType, "application/json");
-    assertEquals(receivedProps!.contentEncoding, "utf-8");
-    assertEquals(receivedProps!.correlationId, correlationId);
-    assertEquals(typeof receivedProps!.messageId, "string");
-    assertEquals(typeof receivedProps!.timestamp, "number");
-  } finally {
-    await cleanupWithGrace(connection, exchangeName, [queueName, producerName], services);
-  }
+    it("should include all message metadata", async () => {
+        let props: Record<string, unknown> | null = null;
+        consumer.subscribe("h", (_d, p) => { props = p as unknown as Record<string, unknown>; return Promise.resolve(); });
+        await consumer.consume(); await new Promise(r => setTimeout(r, 100));
+        const cid = "corr-123";
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 1 })), metadata: { contentType: "application/json", contentEncoding: "utf-8", correlationId: cid } });
+        await new Promise(r => setTimeout(r, 1000));
+        assert.equal(props!.appId, "my-service@2.0.0+test.advanced.metadata");
+        assert.equal(props!.contentType, "application/json");
+        assert.equal(props!.contentEncoding, "utf-8");
+        assert.equal(props!.correlationId, cid);
+        assert.equal(typeof props!.messageId, "string");
+        assert.equal(typeof props!.timestamp, "number");
+    });
 });
