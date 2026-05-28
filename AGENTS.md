@@ -1,21 +1,23 @@
-# Agents Guide - fanaticjs
+# Agents Guide - eventbus
 
 ## Overview
 
-RabbitMQ library implementing independent queues and events using fanout strategy. Each event has
+RabbitMQ event bus library implementing independent queues and events using fanout strategy. Each event has
 dedicated queue with retry and DLQ (Dead Letter Queue) support.
 
 ## Project Structure
 
 ```
-fanaticjs/
+eventbus/
 ├── src/
-│   └── main.ts          # Core EventBusService + ConnectionProvider
+│   └── main.ts          # EventBusService + ConnectionProvider
 ├── test/
 │   ├── unit/            # Unit tests (no RabbitMQ required)
 │   ├── integration/     # Integration tests (require RabbitMQ)
 │   └── e2e/             # End-to-end tests (full workflows)
 ├── doc/                 # Documentation
+├── coverage/            # LCOV coverage output
+├── dist/                # Build output (js + d.ts)
 ├── tsconfig.json
 ├── tsconfig.prod.json
 ├── eslint.config.js
@@ -31,7 +33,7 @@ npm run check
 # Lint
 npm run lint
 
-# Run all tests (sequential)
+# Run all tests (sequential, with coverage)
 npm test
 
 # Run only unit tests
@@ -42,6 +44,12 @@ npm run test:integration
 
 # Run E2E tests
 npm run test:e2e
+
+# Build for production
+npm run build
+
+# Generate LCOV coverage report
+npm run coverage
 ```
 
 ## Dependencies
@@ -57,13 +65,27 @@ npm run test:e2e
 - `tsx`: TypeScript test execution
 - `@types/node`: Node.js type definitions
 
-## Testing
+## Architecture
 
-All tests run with `--test-concurrency 1` (sequential). Tests use `node:test` with TAP reporter.
+### Classes
 
-### Test Patterns
+| Class | Responsibility |
+|-------|---------------|
+| `ConnectionProvider` | Reusable RabbitMQ connection (reconnects if dead) |
+| `EventBusService` | Publish/consume with retry, DLQ, and auto-reconnection |
 
-**Unit tests** use `test()` + `t.test()` subtests:
+### Key Patterns
+
+- **WeakMap close tracking**: `intentionalCloseMap` and `intentionalChannelCloseMap` distinguish intentional vs unintentional channel/connection closes to prevent reconnection loops
+- **Exponential backoff**: `initialReconnectDelay * 2^(attempt - 1)` for both channel and connection reconnection
+- **`connectionProvider` callback**: allows injecting external connection sources (e.g., `ConnectionProvider.create`) for `ensureChannel`
+- **Promise.allSettled**: all registered handlers execute for every message; individual failures don't block others
+
+### Testing
+
+Tests use `node:test` with spec reporter. All tests run with `--test-concurrency 1` (sequential).
+
+**Unit tests** use `test()` + `t.test()`:
 ```typescript
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -75,14 +97,12 @@ test("EventBusService", async (t) => {
 });
 ```
 
-**Integration/E2E tests** use `describe()`/`it()` + `before()`/`after()`:
+**Integration/E2E tests** use `describe()`/`it()` + before()/after():
 ```typescript
 import { describe, it, before, after } from "node:test";
 
 describe("retry - success", () => {
-    let connection: ChannelModel;
-    let producer: EventBusService;
-    let consumer: EventBusService;
+    let connection, producer, consumer;
 
     before(async () => {
         connection = await amqpConnect(URL);
@@ -98,7 +118,8 @@ describe("retry - success", () => {
         await connection.close();
     });
 
-    it("should retry failed handler", async () => {
+    it("should retry failed handler", () => {
+        consumer.subscribe("h", ...);
         // test body
     });
 });
@@ -110,6 +131,8 @@ Rules:
 - `after()` destroys all resources
 - `before` and `after` are always paired
 - No resource sharing between test cases
+- No try/catch or empty catch blocks in tests
+- Exchange/queue names are static string literals per test
 
 ### RabbitMQ for integration/E2E tests
 

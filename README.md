@@ -1,189 +1,274 @@
-# fanaticjs
+# eventbus
 
-RabbitMQ library for Node.js implementing independent queues and events using fanout strategy.
+RabbitMQ event bus library using fanout exchange strategy with per-consumer retry and dead letter queue (DLQ) isolation.
 
 ## Installation
 
 ```bash
-npm install fanaticjs
+npm install eventbus
 ```
 
-## Why fanaticjs?
+## Why eventbus?
 
-Node.js library using RabbitMQ for reliable messaging with key advantages over BullMQ:
+Node.js library for reliable RabbitMQ messaging with key advantages over BullMQ:
 
-- **Consumer Isolation**: Each consumer owns dedicated queue, retry, and DLQ (BullMQ: weak shared queues)
-- **Multi-Handlers**: `Promise.allSettled` executes all handlers (BullMQ: single handler)
-- **Reliability**: Durable ACK/NACK delivery vs BullMQ fire-and-forget
-- **Performance**: fanaticjs 50k msg/sec reliable vs BullMQ 100k+ msg/sec fast but lossy
+- **Consumer Isolation**: Each consumer owns its dedicated queue, retry, and DLQ. BullMQ uses shared queues without per-consumer isolation.
+- **Multi-Handler**: `Promise.allSettled` executes all registered handlers for every message. BullMQ allows a single handler per job.
+- **Reliability**: Durable exchanges and queues with ACK/NACK delivery. Failed messages retry or go to DLQ for post-mortem analysis.
+- **Fanout**: One publish reaches all independent consumers — each with its own retry and DLQ.
 
-**Choose fanaticjs when message delivery is critical.**
+**Choose eventbus when delivery guarantees and consumer isolation are critical.**
 
 ## Architecture
 
-Fanout exchange distributes messages to consumers each with own retry queue and DLQ for isolation.
-Each consumer receives messages independently with dedicated retry mechanism and DLQ.
-
-**Message Flow:**
-
-- Publish → Distribute to all queues → Process → Ack | Retry | Send to DLQ
+```
+Exchange (fanout)
+  ├── Queue A → Handler(s) → ack
+  │   ├── .retry → (TTL) → back to Exchange
+  │   └── .dlq   → dead messages
+  └── Queue B → Handler(s) → ack
+      ├── .retry → (TTL) → back to Exchange
+      └── .dlq   → dead messages
+```
 
 ```mermaid
 graph TD
-    P[Producer] --> E[Exchange]
-    E --> Q1[Queue: consumer1] --> R1[Retry: .retry] --> E
-    E --> Q2[Queue: consumer2] --> R2[Retry: .retry] --> E
-    Q1 --> D1[DLQ: .dlq]
-    Q2 --> D2[DLQ: .dlq]
+    P[Publisher] --> E[Exchange: fanout]
+    E --> Q1[Queue: consumer-a]
+    E --> Q2[Queue: consumer-b]
+    Q1 --> H1[Handler(s)]
+    H1 -->|fail| R1[Retry Queue<br>.retry]
+    H1 -->|max retries| D1[DLQ<br>.dlq]
+    R1 -->|TTL expires| E
+    Q2 --> H2[Handler(s)]
+    H2 -->|fail| R2[Retry Queue<br>.retry]
+    H2 -->|max retries| D2[DLQ<br>.dlq]
+    R2 -->|TTL expires| E
 ```
 
-## Usage Examples
+## API
+
+### `EventBusService`
+
+Main class for publishing and consuming events.
+
+```ts
+new EventBusService(
+  exchangeName: string,
+  queueName: string,
+  source: string,
+  version: string,
+  logger?: Logger,           // default: silent pino
+  maxRetries?: number,        // default: 3
+  retryDelay?: number,        // default: 5000ms
+  maxConnectionRetries?: number,      // default: 10
+  initialReconnectDelay?: number,     // default: 1000ms
+)
+```
+
+#### Methods
+
+| Method | Description |
+|--------|-------------|
+| `connect(connection, rabbitmqUrl?, ownsConnection?, connectionProvider?)` | Connect to RabbitMQ, set up exchanges/queues/event handlers |
+| `subscribe(key, handler)` | Register a handler. Idempotent — same key does not overwrite |
+| `unsubscribe(key)` | Remove a handler by key |
+| `consume()` | Start consuming messages. Dispatches to all registered handlers via `Promise.allSettled` |
+| `publish(event)` | Publish an event to the exchange. Returns `boolean` |
+| `close()` | Cancel consumer, close channel. Closes connection if `ownsConnection=true` |
+
+#### Publish Event Shape
+
+```ts
+type EventPublish = {
+  type: string;
+  data: Buffer;
+  metadata: {
+    contentType: string;
+    timestamp?: number;
+    contentEncoding?: string;
+    correlationId?: string;
+    persistent?: boolean;
+  };
+}
+```
+
+#### Message Handler
+
+```ts
+type MessageHandler = (
+  data: Buffer,
+  metadata: MessageProperties,
+) => Promise<void>;
+```
+
+### `ConnectionProvider`
+
+Manages a shared RabbitMQ connection across multiple `EventBusService` instances.
+
+```ts
+new ConnectionProvider(url: string, logger?: Logger)
+```
+
+#### Methods
+
+| Method | Description |
+|--------|-------------|
+| `create()` | Returns existing connection if alive, otherwise creates a new one (30s timeout) |
+
+## Usage
 
 ### Basic Producer
 
-```typescript
-import { EventBusService } from "fanaticjs";
+```ts
+import { EventBusService } from "eventbus";
+import { connect } from "amqplib";
 
-const producer = new EventBusService(
-  "user-events",
-  "unused",
-  "my-service",
-  "1.0.0",
-);
+const connection = await connect("amqp://localhost");
+const bus = new EventBusService("orders", "email-queue", "email-svc", "1.0.0");
+await bus.connect(connection, "amqp://localhost", true);
 
-await producer.connect(amqpConnection, "amqp://localhost:5672", true);
-
-await producer.publish({
-  type: "user.created",
-  data: Buffer.from(JSON.stringify({ id: "123", name: "Alice" })),
+await bus.publish({
+  type: "order.created",
+  data: Buffer.from(JSON.stringify({ id: "123" })),
   metadata: { contentType: "application/json" },
 });
 ```
 
 ### Basic Consumer
 
-```typescript
-import { EventBusService } from "fanaticjs";
+```ts
+import { EventBusService } from "eventbus";
 
-const consumer = new EventBusService(
-  "user-events",
-  "email-service",
-  "email-service",
-  "1.0.0",
-);
+const bus = new EventBusService("orders", "email-queue", "email-svc", "1.0.0");
+await bus.connect(connection);
 
-await consumer.connect(amqpConnection, "amqp://localhost:5672", false);
-
-consumer.subscribe("handle-user-created", async (data, properties) => {
-  const user = JSON.parse(data.toString());
-  await sendWelcomeEmail(user);
+bus.subscribe("send-email", async (data, props) => {
+  const order = JSON.parse(data.toString());
+  await sendEmail(order);
 });
 
-await consumer.consume();
+await bus.consume();
 ```
 
-### With Custom Logger
+### Multiple Handlers (Same Consumer)
 
-```typescript
-import { EventBusService } from "fanaticjs";
-import pino from "pino";
+```ts
+bus.subscribe("log", async (data) => { console.log("log:", data); });
+bus.subscribe("notify", async (data) => { await sendNotification(data); });
 
-const logger = pino();
-const service = new EventBusService(
-  "user-events",
-  "queue-name",
-  "my-service",
-  "1.0.0",
-  logger,
-);
+await bus.consume();
+// Both handlers run via Promise.allSettled for every message
 ```
 
 ### Custom Retry Configuration
 
-```typescript
-const service = new EventBusService(
-  "user-events",
-  "queue-name",
-  "my-service",
-  "1.0.0",
-  undefined, // logger (optional)
-  5, // maxRetries (default: 3)
-  10000, // retryDelay in ms (default: 5000)
-  10, // maxConnectionRetries (default: 10)
-  2000, // initialReconnectDelay in ms (default: 1000)
+```ts
+const bus = new EventBusService(
+  "orders", "email-queue", "email-svc", "1.0.0",
+  undefined,   // logger
+  5,          // maxRetries (default: 3)
+  10000,      // retryDelay in ms (default: 5000)
+  10,         // maxConnectionRetries (default: 10)
+  2000,       // initialReconnectDelay in ms (default: 1000)
 );
 ```
 
-### Shared Connection via ConnectionProvider
+### Shared Connection via `ConnectionProvider`
 
-```typescript
-import { ConnectionProvider, EventBusService } from "fanaticjs";
+```ts
+import { ConnectionProvider, EventBusService } from "eventbus";
 
-const provider = new ConnectionProvider("amqp://guest:guest@localhost:5672");
-const sharedConnection = await provider.create();
+const provider = new ConnectionProvider("amqp://localhost");
+const sharedConn = await provider.create();
 
-const producer = new EventBusService("events", "prod-queue", "prod", "1.0.0");
-await producer.connect(sharedConnection, undefined, false);
+const producer = new EventBusService("events", "prod-q", "prod", "1.0.0");
+await producer.connect(sharedConn, undefined, false);
 
-const consumer = new EventBusService("events", "cons-queue", "cons", "1.0.0");
-await consumer.connect(sharedConnection, undefined, false);
+const consumer = new EventBusService("events", "cons-q", "cons", "1.0.0");
+await consumer.connect(sharedConn, undefined, false);
+```
+
+### Connection Provider for Auto-Reconnection
+
+```ts
+const provider = new ConnectionProvider("amqp://localhost");
+
+const bus = new EventBusService("events", "my-queue", "my-svc", "1.0.0");
+await bus.connect(
+  await provider.create(),
+  "amqp://localhost",
+  false,
+  () => provider.create()   // called on channel death
+);
+
+await bus.consume();
+// If channel dies, ensureChannel calls the provider to get a fresh connection
+```
+
+### Custom Logger
+
+```ts
+import pino from "pino";
+
+const logger = pino({ level: "info" });
+const bus = new EventBusService("events", "q", "src", "1.0.0", logger);
 ```
 
 ## Features
 
-**Core Architecture:**
+### Core Architecture
+- **Isolated execution**: failures never cascade across consumers
+- **WeakMap close tracking**: distinguishes intentional vs unintentional closes
+- **Multi-handler processing**: `Promise.allSettled` — one failure does not block others
+- **Per-consumer retry + DLQ**: complete error isolation per queue
 
-- Isolated execution (failures never cascade)
-- WeakMap close tracking (avoids false reconnections)
-- Multi-handler processing via Promise.allSettled
-- Per-consumer retry + DLQ for complete error isolation
+### Message Handling
+- **Retry**: Configurable attempts (default 3) and delay (default 5s). Tracks via `x-retry-count` header
+- **DLQ**: Failed messages stored for post-failure analysis
+- **Routing headers**: `x-retry-count`, `x-first-death-exchange`, `x-first-death-queue` for lifecycle tracking
+- **Idempotent subscribers**: `subscribe()` with same key does not overwrite
+- **Unexpected error guard**: sync throws in handlers → direct to DLQ without retry
 
-**Message Handling:**
+### Connection Management
+- **ConnectionProvider**: share one connection across multiple services, auto-recreate if dead
+- **Owned and shared connections**: `ownsConnection` flag controls who closes the connection
+- **Exponential backoff**: `initialReconnectDelay * 2^(attempt - 1)`
+- **Automatic reconnection**: channel death triggers `handleChannelReconnect`, connection death triggers `handleConnectionReconnect`
+- **`connectionProvider` callback**: supply fresh connections on channel failure
+- **Graceful close**: `close()` cancels consumer, closes channel, marks as intentional to prevent reconnect loops
 
-- Retry: Configurable attempts (default 3), delay (default 5s), tracking in `x-retry-count` header
-- DLQ: Failed messages stored for post-failure analysis
-- Routing: Headers `x-retry-count`, `x-first-death-exchange`, `x-first-death-queue` for lifecycle tracking
+### Exchanges and Queues (created automatically by `connect()`)
 
-**Connection Management:**
-
-- Owned and shared connections supported
-- Exponential backoff reconnection
-- Graceful close tracking
+| Resource | Type | Name |
+|----------|------|------|
+| Main exchange | fanout, durable | `{exchangeName}` |
+| DLX exchange | direct, durable | `{queueName}.dlx` |
+| Retry exchange | fanout, durable | `{queueName}.retry` |
+| Main queue | durable, DLQ-bound | `{queueName}` |
+| Retry queue | durable, TTL | `{queueName}.retry` |
+| Dead letter queue | durable | `{queueName}.dlq` |
 
 ## Development
 
-This project uses Node.js with TypeScript.
-
 ```bash
-# Install dependencies
-npm install
+npm install       # dependencies
+npm run check     # type-check
+npm run lint      # eslint
+npm run test:unit # unit tests (no RabbitMQ)
+npm run test      # all tests
 
-# Type check
-npm run check
-
-# Lint
-npm run lint
-
-# Run unit tests
-npm run test:unit
-
-# Run integration tests (requires RabbitMQ)
+# Integration/E2E tests require RabbitMQ:
 npm run rabbitmq:start
 npm run test:integration
-npm run rabbitmq:stop
-
-# Run E2E tests
 npm run test:e2e
-```
-
-## Docker Compose
-
-```bash
-# Start RabbitMQ
-npm run rabbitmq:start
-
-# Stop RabbitMQ
 npm run rabbitmq:stop
+
+# Build
+npm run build     # → dist/main.js + dist/main.d.ts
+
+# Coverage
+npm run coverage  # spec reporter + coverage/lcov.info
 ```
 
 RabbitMQ management UI: http://localhost:15672 (guest/guest)
