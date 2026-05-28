@@ -123,3 +123,54 @@ describe("retry - should send directly to DLQ on unexpected consume error", () =
         assert.ok(true);
     });
 });
+
+describe("retry - queue isolation", () => {
+    let connection: ChannelModel;
+    let consumerFail: EventBusService;
+    let consumerPass: EventBusService;
+
+    before(async () => {
+        connection = await amqpConnect(URL);
+        const ex = "test.retry.isolation";
+
+        consumerFail = new EventBusService(ex, "test.retry.isolation.a", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await consumerFail.connect(connection, URL, false);
+
+        consumerPass = new EventBusService(ex, "test.retry.isolation.b", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await consumerPass.connect(connection, URL, false);
+    });
+
+    after(async () => {
+        await consumerFail.close();
+        await consumerPass.close();
+        await connection.close();
+    });
+
+    it("consumer retry should not affect other consumer on same exchange", async () => {
+        let passReceived = false;
+        let failAttempts = 0;
+
+        consumerFail.subscribe("h", async () => {
+            failAttempts++;
+            throw new Error("always fail");
+        });
+        consumerPass.subscribe("h", async () => {
+            passReceived = true;
+        });
+
+        await consumerFail.consume();
+        await consumerPass.consume();
+        await new Promise(r => setTimeout(r, 100));
+
+        await consumerFail.publish({
+            type: "test.event",
+            data: Buffer.from(JSON.stringify({ x: 1 })),
+            metadata: { contentType: "application/json" },
+        });
+
+        await new Promise(r => setTimeout(r, 500));
+
+        assert.equal(passReceived, true);
+        assert.ok(failAttempts >= 1);
+    });
+});
