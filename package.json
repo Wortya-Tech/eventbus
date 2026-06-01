@@ -1,5 +1,5 @@
 {
-  "name": "eventbus",
+  "name": "@eventbus/eventbus",
   "version": "0.1.0",
   "description": "RabbitMQ event bus library implementing independent queues and events using fanout strategy.",
   "license": "LGPL-3.0-or-later",

@@ -5,7 +5,7 @@ RabbitMQ event bus library using fanout exchange strategy with per-consumer retr
 ## Installation
 
 ```bash
-npm install eventbus
+npm install @eventbus/eventbus
 ```
 
 ## Why eventbus?
