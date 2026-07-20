@@ -119,6 +119,7 @@ export class EventBusService {
   private readonly logger: Logger;
   private readonly MAX_CONNECTION_RETRIES: number;
   private readonly INITIAL_RECONNECT_DELAY: number;
+  private readonly PREFETCH: number;
   private connectionRetryCount: number;
   private isReconnecting: boolean;
   private rabbitmqUrl?: string;
@@ -137,6 +138,7 @@ export class EventBusService {
    * @param retryDelay - Delay between retry attempts in milliseconds. Defaults to 5000.
    * @param maxConnectionRetries - Maximum number of connection retry attempts. Defaults to 10.
    * @param initialReconnectDelay - Initial delay between reconnection attempts in milliseconds. Defaults to 1000.
+   * @param prefetch - Maximum number of unacknowledged messages delivered at once. Defaults to 10.
    * @example
    * ```ts
    * const bus = new EventBusService(
@@ -157,11 +159,13 @@ export class EventBusService {
     retryDelay: number = 5000,
     maxConnectionRetries: number = 10,
     initialReconnectDelay: number = 1000,
+    prefetch: number = 10,
   ) {
     this.MAX_RETRIES = maxRetries;
     this.RETRY_DELAY = retryDelay;
     this.MAX_CONNECTION_RETRIES = maxConnectionRetries;
     this.INITIAL_RECONNECT_DELAY = initialReconnectDelay;
+    this.PREFETCH = prefetch;
     this.deadLetterExchange = `${this.queueName}.dlx`;
     this.retryExchange = `${this.queueName}.retry`;
     this.subscribers = new Map();
@@ -588,6 +592,7 @@ export class EventBusService {
   async consume(): Promise<void> {
     // Ensure we have a healthy channel before consuming
     const channel = await this.ensureChannel();
+    channel.prefetch(this.PREFETCH);
 
     const result = await channel.consume(
       this.queueName,

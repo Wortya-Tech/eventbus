@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel, Message } from "amqplib";
 
-const URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
+const URL = process.env.RABBITMQ_URL!;
 
 test("simple raw publish/consume", async (t) => {
     let connection: ChannelModel;
