@@ -81,6 +81,38 @@ test("EventBusService", async (t) => {
         );
     });
 
+    await t.test("should use default prefetch of 10", () => {
+        const service = new EventBusService(
+            "test-exchange",
+            "test-queue",
+            "test-source",
+            "1.0.0",
+        );
+        assert.equal(
+            (service as unknown as Record<string, unknown>)["PREFETCH"],
+            10,
+        );
+    });
+
+    await t.test("should allow custom prefetch via parameter", () => {
+        const service = new EventBusService(
+            "test-exchange",
+            "test-queue",
+            "test-source",
+            "1.0.0",
+            undefined,
+            3,
+            5000,
+            10,
+            1000,
+            5,
+        );
+        assert.equal(
+            (service as unknown as Record<string, unknown>)["PREFETCH"],
+            5,
+        );
+    });
+
     await t.test("connect() should reject with null connection", async () => {
         const service = new EventBusService(
             "test-exchange",

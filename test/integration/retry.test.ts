@@ -4,7 +4,7 @@ import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel } from "amqplib";
 import { EventBusService } from "../../src/main.js";
 
-const URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
+const URL = process.env.RABBITMQ_URL!;
 
 test("retry - should retry failed handler and eventually succeed", async (t) => {
     let connection: ChannelModel;

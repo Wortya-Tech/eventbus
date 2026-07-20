@@ -4,7 +4,7 @@ import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel } from "amqplib";
 import { ConnectionProvider, EventBusService } from "../../src/main.js";
 
-const URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
+const URL = process.env.RABBITMQ_URL!;
 
 test("connection-sharing - owned producer", async (t) => {
     let connection: ChannelModel;
@@ -13,7 +13,7 @@ test("connection-sharing - owned producer", async (t) => {
     t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.owned.producer", "test.owned.producer.q", "test", "1.0.0");
-        await producer.connect(connection, "amqp://guest:guest@localhost:5672", true);
+        await producer.connect(connection, URL, true);
     });
 
     t.after(async () => {
@@ -35,9 +35,9 @@ test("connection-sharing - owned consumer", async (t) => {
     t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.owned.consumer", "test.owned.consumer.p", "test", "1.0.0");
-        await producer.connect(connection, "amqp://guest:guest@localhost:5672", false);
+        await producer.connect(connection, URL, false);
         consumer = new EventBusService("test.owned.consumer", "test.owned.consumer.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
-        await consumer.connect(connection, "amqp://guest:guest@localhost:5672", false);
+        await consumer.connect(connection, URL, false);
     });
 
     t.after(async () => {
@@ -87,7 +87,7 @@ test("connection-sharing - provider reconnect", async (t) => {
     let producer: EventBusService;
 
     t.before(async () => {
-        const provider = new ConnectionProvider("amqp://guest:guest@localhost:5672");
+        const provider = new ConnectionProvider(URL);
         connection = await provider.create();
         producer = new EventBusService("test.provider.reconnect", "test.provider.reconnect.p", "test", "1.0.0");
         await producer.connect(connection, undefined, false);
@@ -101,7 +101,7 @@ test("connection-sharing - provider reconnect", async (t) => {
     await t.test("should reuse connection provider on reconnect", async () => {
         await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 1 })), metadata: { contentType: "application/json" } });
         await new Promise(r => setTimeout(r, 200));
-        const provider = new ConnectionProvider("amqp://guest:guest@localhost:5672");
+        const provider = new ConnectionProvider(URL);
         const newConn = await provider.create();
         assert.ok(newConn !== null);
         await newConn.close();
@@ -112,7 +112,7 @@ test("connection-sharing - provider dead connection", async (t) => {
     let provider: ConnectionProvider;
 
     t.before(() => {
-        provider = new ConnectionProvider("amqp://guest:guest@localhost:5672");
+        provider = new ConnectionProvider(URL);
         // Inject a "dead" connection so create() makes a new one
         (provider as unknown as Record<string, ChannelModel>)["connection"] = {
             connection: { stream: { destroyed: true } },
@@ -142,7 +142,7 @@ test("connection-sharing - ensureChannel with provider", async (t) => {
 
     t.before(async () => {
         connection = await amqpConnect(URL);
-        provider = new ConnectionProvider("amqp://guest:guest@localhost:5672");
+        provider = new ConnectionProvider(URL);
         svc = new EventBusService("test.ensure.channel.pvd", "test.ensure.channel.pvd.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
         await svc.connect(connection, undefined, false, () => provider.create());
     });
@@ -171,5 +171,3 @@ test("connection-sharing - ensureChannel with provider", async (t) => {
         assert.equal(succeeded, true);
     });
 });
-
-
