@@ -3,7 +3,7 @@
   "repository": {
     "url": "https://github.com/Wortya-Tech/eventbus"
   },
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "RabbitMQ event bus library implementing independent queues and events using fanout strategy.",
   "license": "LGPL-3.0-or-later",
   "type": "module",
@@ -41,7 +41,7 @@
     "typescript-eslint": "^8.18.0"
   },
   "dependencies": {
-    "amqplib": "^1.0.3",
+    "amqplib": "^2.2.1",
     "pino": "^10.3.1"
   }
 }
