@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { connect as amqpConnect } from "amqplib";
-import type { ChannelModel } from "amqplib";
+import type { ChannelModel, Message } from "amqplib";
 import { EventBusService } from "../../src/main.ts";
 
 const URL = process.env.RABBITMQ_URL!;
@@ -172,5 +172,106 @@ test("retry - queue isolation", async (t) => {
 
         assert.equal(passReceived, true);
         assert.ok(failAttempts >= 1);
+    });
+});
+
+test("retry - partial failure with multiple handlers eventually succeeds", async (t) => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
+
+    t.before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService("test.retry.partial", "test.retry.partial.p", "test", "1.0.0", undefined, 2, 100);
+        await producer.connect(connection, URL, false);
+        consumer = new EventBusService("test.retry.partial", "test.retry.partial.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await consumer.connect(connection, URL, false);
+    });
+
+    t.after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
+    });
+
+    await t.test("should execute all handlers and retry when one handler fails", async () => {
+        const okTkr = { attempts: 0 };
+        const flakyTkr = { attempts: 0, failures: 0 };
+
+        consumer.subscribe("ok", async () => {
+            okTkr.attempts++;
+        });
+        consumer.subscribe("flaky", async () => {
+            flakyTkr.attempts++;
+            if (flakyTkr.attempts <= 1) {
+                flakyTkr.failures++;
+                throw new Error("fail");
+            }
+        });
+
+        await consumer.consume(); await new Promise(r => setTimeout(r, 100));
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 1 })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 800));
+
+        assert.equal(flakyTkr.failures, 1);
+        assert.ok(flakyTkr.attempts >= 2);
+        assert.equal(okTkr.attempts, flakyTkr.attempts);
+    });
+});
+
+test("retry - partial failure sends message to DLQ when one handler always fails", async (t) => {
+    let connection: ChannelModel;
+    let producer: EventBusService;
+    let consumer: EventBusService;
+
+    t.before(async () => {
+        connection = await amqpConnect(URL);
+        producer = new EventBusService("test.retry.partialdlq", "test.retry.partialdlq.p", "test", "1.0.0", undefined, 2, 100);
+        await producer.connect(connection, URL, false);
+        consumer = new EventBusService("test.retry.partialdlq", "test.retry.partialdlq.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        await consumer.connect(connection, URL, false);
+    });
+
+    t.after(async () => {
+        await consumer.close();
+        await producer.close();
+        await connection.close();
+    });
+
+    await t.test("should dead-letter message after max retries while success handler keeps running", async () => {
+        const okTkr = { attempts: 0 };
+        const badTkr = { attempts: 0 };
+
+        // Watch the DLQ directly with a raw channel before publishing
+        const dlqChannel = await connection.createChannel();
+        const dlqMessages: Message[] = [];
+        const dlqConsumer = await dlqChannel.consume("test.retry.partialdlq.q.dlq", (msg) => {
+            if (msg) {
+                dlqMessages.push(msg);
+                dlqChannel.ack(msg);
+            }
+        });
+
+        consumer.subscribe("ok", async () => {
+            okTkr.attempts++;
+        });
+        consumer.subscribe("bad", async () => {
+            badTkr.attempts++;
+            throw new Error("always fail");
+        });
+
+        await consumer.consume(); await new Promise(r => setTimeout(r, 100));
+        await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 1 })), metadata: { contentType: "application/json" } });
+        await new Promise(r => setTimeout(r, 1500));
+
+        assert.equal(dlqMessages.length, 1);
+        const dlqMsg = dlqMessages[0]!;
+        assert.equal(dlqMsg.properties.headers?.["x-retry-count"], 2);
+        assert.deepEqual(JSON.parse(dlqMsg.content.toString()), { x: 1 });
+        assert.equal(okTkr.attempts, badTkr.attempts);
+        assert.ok(okTkr.attempts >= 3);
+
+        await dlqChannel.cancel(dlqConsumer.consumerTag);
+        await dlqChannel.close();
     });
 });

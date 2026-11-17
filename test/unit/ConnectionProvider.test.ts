@@ -46,4 +46,20 @@ test("ConnectionProvider", async (t) => {
             mockConn,
         );
     });
+
+    await t.test("isConnectionAlive() should return false when inspection throws", () => {
+        const provider = new ConnectionProvider("amqp://localhost:5672");
+        const throwingConn = new Proxy({}, {
+            get() {
+                throw new Error("boom");
+            },
+        });
+        const isConnectionAlive = (
+            provider as unknown as {
+                isConnectionAlive: (conn: unknown) => boolean;
+            }
+        )["isConnectionAlive"].bind(provider);
+
+        assert.equal(isConnectionAlive(throwingConn), false);
+    });
 });

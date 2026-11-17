@@ -171,4 +171,105 @@ test("EventBusService", async (t) => {
         await service.close();
         assert.ok(true);
     });
+
+    await t.test("handleChannelReconnect() should skip when already reconnecting", async () => {
+        const service = new EventBusService(
+            "test-exchange",
+            "test-queue",
+            "test-source",
+            "1.0.0",
+        );
+        const priv = service as unknown as {
+            isReconnecting: boolean;
+            connectionRetryCount: number;
+            handleChannelReconnect: () => Promise<void>;
+        };
+        priv.isReconnecting = true;
+
+        await priv.handleChannelReconnect();
+
+        assert.equal(priv.connectionRetryCount, 0);
+        assert.equal(priv.isReconnecting, true);
+    });
+
+    await t.test("handleConnectionReconnect() should skip when already reconnecting", async () => {
+        const service = new EventBusService(
+            "test-exchange",
+            "test-queue",
+            "test-source",
+            "1.0.0",
+        );
+        const priv = service as unknown as {
+            isReconnecting: boolean;
+            connectionRetryCount: number;
+            handleConnectionReconnect: () => Promise<void>;
+        };
+        priv.isReconnecting = true;
+
+        await priv.handleConnectionReconnect();
+
+        assert.equal(priv.connectionRetryCount, 0);
+        assert.equal(priv.isReconnecting, true);
+    });
+
+    await t.test("handleConnectionReconnect() should give up after max retries when no URL is available", async () => {
+        const service = new EventBusService(
+            "test-exchange",
+            "test-queue",
+            "test-source",
+            "1.0.0",
+            undefined,
+            3,
+            100,
+            3,
+            10,
+        );
+        const priv = service as unknown as {
+            isReconnecting: boolean;
+            connectionRetryCount: number;
+            handleConnectionReconnect: () => Promise<void>;
+        };
+
+        // No rabbitmqUrl: every attempt throws, recursion retries until the cap
+        await priv.handleConnectionReconnect();
+
+        assert.equal(priv.connectionRetryCount, 3);
+        assert.equal(priv.isReconnecting, false);
+    });
+
+    await t.test("createQueue() should reject when channel is not initialized", async () => {
+        const service = new EventBusService(
+            "test-exchange",
+            "test-queue",
+            "test-source",
+            "1.0.0",
+        );
+        const priv = service as unknown as {
+            createQueue: () => Promise<void>;
+        };
+
+        await assert.rejects(
+            () => priv.createQueue(),
+            /Channel not initialized/,
+        );
+    });
+
+    await t.test("handleMessage() should ignore null messages", async () => {
+        const service = new EventBusService(
+            "test-exchange",
+            "test-queue",
+            "test-source",
+            "1.0.0",
+        );
+        const priv = service as unknown as {
+            handleMessage: (msg: null) => Promise<void>;
+        };
+
+        await priv.handleMessage(null);
+
+        assert.equal(
+            (service as unknown as Record<string, unknown>)["channel"],
+            undefined,
+        );
+    });
 });
