@@ -39,7 +39,6 @@
     "@types/node": "^26.6.6",
     "globals": "^16.0.0",
     "oxlint": "^1.94.0",
-    "tsx": "^4.19.0",
     "typescript": "^7.0.2"
   },
   "dependencies": {
