@@ -7,7 +7,7 @@
   "description": "RabbitMQ event bus library implementing independent queues and events using fanout strategy.",
   "license": "LGPL-3.0-or-later",
   "engines": {
-    "node": ">=26.13.1"
+    "node": ">=24"
   },
   "type": "module",
   "exports": {
