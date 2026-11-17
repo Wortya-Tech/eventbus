@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel } from "amqplib";
 import { EventBusService } from "../../src/main.ts";
+import { assertLog, captureLogger } from "../fixtures/capture-logger.ts";
 
 const URL = process.env.RABBITMQ_URL!;
 
@@ -10,12 +11,13 @@ test("basics - publish and consume", async (t) => {
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
+    const logs = captureLogger();
 
     t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.basics.pub", "test.basics.pub.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
-        consumer = new EventBusService("test.basics.pub", "test.basics.pub.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        consumer = new EventBusService("test.basics.pub", "test.basics.pub.q", "test", "1.0.0", logs.logger, 2, 100, 3, 100);
         await consumer.connect(connection, URL, false);
     });
 
@@ -35,6 +37,8 @@ test("basics - publish and consume", async (t) => {
         while (Date.now() - start < 5000) { if (received) break; await new Promise(r => setTimeout(r, 50)); }
         if (!received) throw new Error("timeout");
         assert.equal(received.id, data.id);
+
+        assertLog(logs.records, "Message success delivery", "info");
     });
 });
 

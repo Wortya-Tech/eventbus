@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { ConnectionProvider } from "../../src/main.ts";
 import type { ChannelModel } from "amqplib";
+import { assertLog, captureLogger } from "../fixtures/capture-logger.ts";
 
 test("ConnectionProvider", async (t) => {
     await t.test("should store the URL", () => {
@@ -61,5 +62,20 @@ test("ConnectionProvider", async (t) => {
         )["isConnectionAlive"].bind(provider);
 
         assert.equal(isConnectionAlive(throwingConn), false);
+    });
+
+    await t.test("create() should log when creating a new connection", async () => {
+        const logs = captureLogger();
+        const provider = new ConnectionProvider("amqp://localhost:1", logs.logger);
+
+        // Port 1 refuses connections fast, so create() fails after logging
+        await assert.rejects(() => provider.create());
+
+        assertLog(
+            logs.records,
+            "Creating new RabbitMQ connection from provider",
+            "info",
+        );
+        assertLog(logs.records, "Connection domain", "debug");
     });
 });

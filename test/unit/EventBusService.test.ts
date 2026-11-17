@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { EventBusService } from "../../src/main.ts";
 import type { ChannelModel } from "amqplib";
 import type { MessageHandler } from "../../src/main.ts";
+import { assertLog, captureLogger } from "../fixtures/capture-logger.ts";
 
 test("EventBusService", async (t) => {
     await t.test("should use default logger if not provided", () => {
@@ -126,11 +127,13 @@ test("EventBusService", async (t) => {
     });
 
     await t.test("subscribe() should keep original handler when key already exists", () => {
+        const logs = captureLogger();
         const service = new EventBusService(
             "test-exchange",
             "test-queue",
             "test-source",
             "1.0.0",
+            logs.logger,
         );
         const h1: MessageHandler = async () => {};
         const h2: MessageHandler = async () => {};
@@ -139,6 +142,9 @@ test("EventBusService", async (t) => {
         const subs = (service as unknown as Record<string, Map<string, MessageHandler>>)["subscribers"];
         assert.equal(subs.size, 1);
         assert.strictEqual(subs.get("k"), h1);
+
+        assertLog(logs.records, "channel k subscribed", "info");
+        assertLog(logs.records, "channel k already subscribed", "info");
     });
 
     await t.test("unsubscribe() should remove handler", () => {
@@ -155,11 +161,13 @@ test("EventBusService", async (t) => {
     });
 
     await t.test("close() should handle error when canceling consumer", async () => {
+        const logs = captureLogger();
         const service = new EventBusService(
             "test-exchange",
             "test-queue",
             "test-source",
             "1.0.0",
+            logs.logger,
         );
         const priv = service as unknown as Record<string, unknown>;
         priv["consumerTag"] = "test-tag";
@@ -169,15 +177,17 @@ test("EventBusService", async (t) => {
         };
 
         await service.close();
-        assert.ok(true);
+        assertLog(logs.records, "Error canceling consumer", "error");
     });
 
     await t.test("handleChannelReconnect() should skip when already reconnecting", async () => {
+        const logs = captureLogger();
         const service = new EventBusService(
             "test-exchange",
             "test-queue",
             "test-source",
             "1.0.0",
+            logs.logger,
         );
         const priv = service as unknown as {
             isReconnecting: boolean;
@@ -190,14 +200,21 @@ test("EventBusService", async (t) => {
 
         assert.equal(priv.connectionRetryCount, 0);
         assert.equal(priv.isReconnecting, true);
+        assertLog(
+            logs.records,
+            "Channel reconnection already in progress, skipping",
+            "info",
+        );
     });
 
     await t.test("handleConnectionReconnect() should skip when already reconnecting", async () => {
+        const logs = captureLogger();
         const service = new EventBusService(
             "test-exchange",
             "test-queue",
             "test-source",
             "1.0.0",
+            logs.logger,
         );
         const priv = service as unknown as {
             isReconnecting: boolean;
@@ -210,15 +227,21 @@ test("EventBusService", async (t) => {
 
         assert.equal(priv.connectionRetryCount, 0);
         assert.equal(priv.isReconnecting, true);
+        assertLog(
+            logs.records,
+            "Connection reconnection already in progress, skipping",
+            "info",
+        );
     });
 
     await t.test("handleConnectionReconnect() should give up after max retries when no URL is available", async () => {
+        const logs = captureLogger();
         const service = new EventBusService(
             "test-exchange",
             "test-queue",
             "test-source",
             "1.0.0",
-            undefined,
+            logs.logger,
             3,
             100,
             3,
@@ -235,6 +258,12 @@ test("EventBusService", async (t) => {
 
         assert.equal(priv.connectionRetryCount, 3);
         assert.equal(priv.isReconnecting, false);
+        assertLog(logs.records, "Failed to reconnect to RabbitMQ", "error");
+        assertLog(
+            logs.records,
+            /Maximum connection retry attempts \(3\) reached/,
+            "error",
+        );
     });
 
     await t.test("createQueue() should reject when channel is not initialized", async () => {

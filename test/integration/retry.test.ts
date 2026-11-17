@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel, Message } from "amqplib";
 import { EventBusService } from "../../src/main.ts";
+import { assertLog, captureLogger } from "../fixtures/capture-logger.ts";
 
 const URL = process.env.RABBITMQ_URL!;
 
@@ -10,12 +11,13 @@ test("retry - should retry failed handler and eventually succeed", async (t) => 
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
+    const logs = captureLogger();
 
     t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.retry.success", "test.retry.success.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
-        consumer = new EventBusService("test.retry.success", "test.retry.success.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        consumer = new EventBusService("test.retry.success", "test.retry.success.q", "test", "1.0.0", logs.logger, 2, 100, 3, 100);
         await consumer.connect(connection, URL, false);
     });
 
@@ -35,6 +37,9 @@ test("retry - should retry failed handler and eventually succeed", async (t) => 
         await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 1 })), metadata: { contentType: "application/json" } });
         await new Promise(r => setTimeout(r, 500));
         assert.ok(tkr.attempts >= 2); assert.equal(tkr.failures, 1); assert.ok(tkr.attempts > tkr.failures);
+
+        assertLog(logs.records, /Retrying message \(attempt 1 of 2\)/, "info");
+        assertLog(logs.records, "Message success delivery", "info");
     });
 });
 
@@ -42,12 +47,13 @@ test("retry - should send to dead letter queue after max retries", async (t) => 
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
+    const logs = captureLogger();
 
     t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.retry.dlq", "test.retry.dlq.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
-        consumer = new EventBusService("test.retry.dlq", "test.retry.dlq.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        consumer = new EventBusService("test.retry.dlq", "test.retry.dlq.q", "test", "1.0.0", logs.logger, 2, 100, 3, 100);
         await consumer.connect(connection, URL, false);
     });
 
@@ -59,11 +65,20 @@ test("retry - should send to dead letter queue after max retries", async (t) => 
 
     await t.test("should send to dead letter queue after max retries", async () => {
         const tkr = { attempts: 0 };
-        consumer.subscribe("h", async () => { tkr.attempts++; if (tkr.attempts <= 2) throw new Error("fail"); });
+        // Always fail: only then does the message exhaust retries and reach the DLQ
+        consumer.subscribe("h", async () => { tkr.attempts++; throw new Error("fail"); });
         await consumer.consume(); await new Promise(r => setTimeout(r, 100));
         await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 1 })), metadata: { contentType: "application/json" } });
         await new Promise(r => setTimeout(r, 400 + 1000));
         assert.ok(tkr.attempts > 2);
+
+        assertLog(logs.records, /Retrying message \(attempt 1 of 2\)/, "info");
+        assertLog(logs.records, /Retrying message \(attempt 2 of 2\)/, "info");
+        assertLog(
+            logs.records,
+            /Message exceeded maximum retries \(2\), sending to DLQ/,
+            "warn",
+        );
     });
 });
 
@@ -71,12 +86,13 @@ test("retry - should increment retry count headers correctly", async (t) => {
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
+    const logs = captureLogger();
 
     t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.retry.headers", "test.retry.headers.p", "test", "1.0.0", undefined, 2, 100);
         await producer.connect(connection, URL, false);
-        consumer = new EventBusService("test.retry.headers", "test.retry.headers.q", "test", "1.0.0", undefined, 2, 100, 3, 100);
+        consumer = new EventBusService("test.retry.headers", "test.retry.headers.q", "test", "1.0.0", logs.logger, 2, 100, 3, 100);
         await consumer.connect(connection, URL, false);
     });
 
@@ -93,6 +109,9 @@ test("retry - should increment retry count headers correctly", async (t) => {
         await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 1 })), metadata: { contentType: "application/json" } });
         await new Promise(r => setTimeout(r, 300 + 500));
         assert.ok(tkr.attempts > 1); assert.ok(tkr.attempts >= 2);
+
+        assertLog(logs.records, /Retrying message \(attempt 1 of 2\)/, "info");
+        assertLog(logs.records, /Retrying message \(attempt 2 of 2\)/, "info");
     });
 });
 
@@ -100,12 +119,13 @@ test("retry - should send directly to DLQ on unexpected consume error", async (t
     let connection: ChannelModel;
     let producer: EventBusService;
     let consumer: EventBusService;
+    const logs = captureLogger();
 
     t.before(async () => {
         connection = await amqpConnect(URL);
         producer = new EventBusService("test.retry.unexpected", "test.retry.unexpected.p", "test", "1.0.0", undefined, 1, 100);
         await producer.connect(connection, URL, false);
-        consumer = new EventBusService("test.retry.unexpected", "test.retry.unexpected.q", "test", "1.0.0", undefined, 1, 100, 3, 100);
+        consumer = new EventBusService("test.retry.unexpected", "test.retry.unexpected.q", "test", "1.0.0", logs.logger, 1, 100, 3, 100);
         await consumer.connect(connection, URL, false);
     });
 
@@ -121,6 +141,8 @@ test("retry - should send directly to DLQ on unexpected consume error", async (t
         await producer.publish({ type: "test.event", data: Buffer.from(JSON.stringify({ x: 1 })), metadata: { contentType: "application/json" } });
         await new Promise(r => setTimeout(r, 500));
         assert.ok(true);
+
+        assertLog(logs.records, "Error processing message", "error");
     });
 });
 
