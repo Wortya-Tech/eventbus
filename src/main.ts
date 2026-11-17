@@ -204,7 +204,7 @@ export class EventBusService {
             this.subscribers.set(key, handler);
             return
         } 
-        this.logger.info(`channel ${key} alredy subscribed`);
+        this.logger.info(`channel ${key} already subscribed`);
     }
 
     /**
@@ -612,10 +612,6 @@ export class EventBusService {
             const handlers = this.subscribers.values();
 
             // Execute all handlers
-            this.logger.info(
-                msg.properties,
-                `Received message of type ${msg.properties.contentType}`,
-            );
             const results = await Promise.allSettled(
                 Array.from(handlers).map((handler) =>
                     handler(msg.content, msg.properties),
@@ -628,7 +624,7 @@ export class EventBusService {
             );
 
             if (!hasFailures) {
-                this.logger.info(msg.properties, "Message success delivey");
+                this.logger.info(msg.properties, "Message success delivery");
                 this.channel?.ack(msg);
                 return
             }
@@ -660,7 +656,7 @@ export class EventBusService {
             this.channel?.nack(msg, false, false);
         } catch (error) {
             this.logger.error(
-                { error, propreties: msg.properties },
+                { error, properties: msg.properties },
                 `Error processing message`,
             );
             // On unexpected errors, send directly to DLQ
