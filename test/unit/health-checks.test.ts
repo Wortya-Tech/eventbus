@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { EventBusService } from "../../src/main.js";
+import { EventBusService } from "../../src/main.ts";
 import type { Channel, ChannelModel } from "amqplib";
 import { pino } from "pino";
 

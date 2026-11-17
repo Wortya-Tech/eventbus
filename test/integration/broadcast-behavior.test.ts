@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { connect as amqpConnect } from "amqplib";
 import type { ChannelModel } from "amqplib";
-import { EventBusService } from "../../src/main.js";
+import { EventBusService } from "../../src/main.ts";
 
 const URL = process.env.RABBITMQ_URL!;
 

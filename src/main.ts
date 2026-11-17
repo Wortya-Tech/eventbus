@@ -50,11 +50,13 @@ const intentionalChannelCloseMap = new WeakMap<Channel, boolean>();
 export class ConnectionProvider {
   private connection?: ChannelModel;
   private readonly logger: Logger;
+  public readonly url: string
 
   constructor(
-    public readonly url: string,
+    url: string,
     logger?: Logger,
   ) {
+    this.url = url
     this.logger = logger ?? pino({ level: "silent" });
   }
 
@@ -126,6 +128,10 @@ export class EventBusService {
   private consumerTag?: string;
   private ownsConnection: boolean;
   private connectionProvider?: () => Promise<ChannelModel>;
+  private readonly exchangeName: string
+  private readonly queueName: string
+  private readonly source: string
+  private readonly version: string
 
   /**
    * Creates a new event bus service instance.
@@ -150,10 +156,10 @@ export class EventBusService {
    * ```
    */
   constructor(
-    private readonly exchangeName: string,
-    private readonly queueName: string,
-    private readonly source: string,
-    private readonly version: string,
+    exchangeName: string,
+    queueName: string,
+    source: string,
+    version: string,
     logger?: Logger,
     maxRetries: number = 3,
     retryDelay: number = 5000,
@@ -161,6 +167,10 @@ export class EventBusService {
     initialReconnectDelay: number = 1000,
     prefetch: number = 10,
   ) {
+    this.exchangeName = exchangeName;
+    this.queueName = queueName
+    this.source = source
+    this.version = version
     this.MAX_RETRIES = maxRetries;
     this.RETRY_DELAY = retryDelay;
     this.MAX_CONNECTION_RETRIES = maxConnectionRetries;

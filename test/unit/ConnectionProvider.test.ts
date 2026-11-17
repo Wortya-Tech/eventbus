@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { ConnectionProvider } from "../../src/main.js";
+import { ConnectionProvider } from "../../src/main.ts";
 import type { ChannelModel } from "amqplib";
 
 test("ConnectionProvider", async (t) => {

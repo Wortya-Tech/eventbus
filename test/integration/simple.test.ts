@@ -22,11 +22,11 @@ test("simple raw publish/consume", async (t) => {
 
         let receivedData: { test: string } | null = null;
         const { consumerTag } = await channel.consume(q, async (msg: Message | null) => {
-            if (msg) { receivedData = JSON.parse(new TextDecoder().decode(msg.content)); await channel.ack(msg); }
+            if (msg) { receivedData = JSON.parse(new TextDecoder().decode(msg.content)); channel.ack(msg); }
         });
 
         await new Promise(r => setTimeout(r, 100));
-        await channel.publish(ex, "", Buffer.from(JSON.stringify({ test: "data" })));
+        channel.publish(ex, "", Buffer.from(JSON.stringify({ test: "data" })));
         await new Promise(r => setTimeout(r, 500));
 
         if (!receivedData) throw new Error("no data received");

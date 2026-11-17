@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { EventBusService } from "../../src/main.js";
+import { EventBusService } from "../../src/main.ts";
 import type { ChannelModel } from "amqplib";
-import type { MessageHandler } from "../../src/main.js";
+import type { MessageHandler } from "../../src/main.ts";
 
 test("EventBusService", async (t) => {
     await t.test("should use default logger if not provided", () => {
