@@ -64,6 +64,53 @@ test("ConnectionProvider", async (t) => {
         assert.equal(isConnectionAlive(throwingConn), false);
     });
 
+    await t.test("isConnectionAlive() should return false for null connection", () => {
+        const provider = new ConnectionProvider("amqp://localhost:5672");
+        const isConnectionAlive = (
+            provider as unknown as {
+                isConnectionAlive: (conn: unknown) => boolean;
+            }
+        )["isConnectionAlive"].bind(provider);
+
+        assert.equal(isConnectionAlive(null), false);
+    });
+
+    await t.test("isConnectionAlive() should return false when connection object is missing", () => {
+        const provider = new ConnectionProvider("amqp://localhost:5672");
+        const isConnectionAlive = (
+            provider as unknown as {
+                isConnectionAlive: (conn: unknown) => boolean;
+            }
+        )["isConnectionAlive"].bind(provider);
+
+        assert.equal(isConnectionAlive({}), false);
+    });
+
+    await t.test("isConnectionAlive() should return false when stream is missing", () => {
+        const provider = new ConnectionProvider("amqp://localhost:5672");
+        const isConnectionAlive = (
+            provider as unknown as {
+                isConnectionAlive: (conn: unknown) => boolean;
+            }
+        )["isConnectionAlive"].bind(provider);
+
+        assert.equal(isConnectionAlive({ connection: {} }), false);
+    });
+
+    await t.test("isConnectionAlive() should return false when the stream is destroyed", () => {
+        const provider = new ConnectionProvider("amqp://localhost:5672");
+        const isConnectionAlive = (
+            provider as unknown as {
+                isConnectionAlive: (conn: unknown) => boolean;
+            }
+        )["isConnectionAlive"].bind(provider);
+
+        assert.equal(
+            isConnectionAlive({ connection: { stream: { destroyed: true } } }),
+            false,
+        );
+    });
+
     await t.test("create() should log when creating a new connection", async () => {
         const logs = captureLogger();
         const provider = new ConnectionProvider("amqp://localhost:1", logs.logger);
